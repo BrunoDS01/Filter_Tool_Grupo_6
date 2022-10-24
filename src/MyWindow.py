@@ -22,6 +22,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.listaFiltros = []
         self.listaPlantillas = []
+        self.listaSOS = []
 
         # Configuración gráfica
 
@@ -53,6 +54,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.crearFiltroButton.clicked.connect(self.crearFiltro)
         self.graficarPlantillasButton.clicked.connect(self.graficarPlantillasFiltros)
         self.graficarFiltrosButton.clicked.connect(self.graficarPlantillasFiltros)
+        self.obtenerEtapasButton.clicked.connect(self.obtenerEtapas)
 
 
         self.borrarFiltrosButton.clicked.connect(self.deleteFiltros)
@@ -193,6 +195,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 self.listFiltrosWidget.addItem(item)
 
+                self.filtroComboBox.addItem(filtroName)
+
+        self.filtroComboBox.clear()
+        for i in range(len(self.listaFiltros)):
+            self.filtroComboBox.addItem(self.listaFiltros[i].nombre)
+
+
+
     '''
         Grafica las plantillas seleccionadas
     '''
@@ -283,6 +293,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.polosCerosPlot.plotPolosCeros()
 
     '''
+        Obtiene las etapas del filtro seleccionado
+    '''
+    def obtenerEtapas(self):
+        index = self.filtroComboBox.currentIndex()
+        filtroActual = self.listaFiltros[index]
+
+        self.listaSOS = filtroActual.getSOS()
+
+        for i in range(len(self.listaSOS)):
+            item = QListWidgetItem("Etapa " + str(i))
+            item.setCheckState(Qt.Checked)
+
+            self.listaEtapasWidget.addItem(item)
+
+
+    '''
         Funciones que eliminan cosas
     '''
     def deletePlantillas(self):
@@ -304,12 +330,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if self.listFiltrosWidget.item(numberOfFunctions-1-i).checkState() == 2:
                 self.listFiltrosWidget.takeItem(numberOfFunctions-1-i)
                 self.listaFiltros.pop(numberOfFunctions-1-i)
+        self.filtroComboBox.clear()
+        for i in range(len(self.listaFiltros)):
+            self.filtroComboBox.addItem(self.listaFiltros[i].nombre)
 
     def deleteAllFiltros(self):
         numberOfFunctions = len(self.listaFiltros)
         for i in range(numberOfFunctions):
             self.listFiltrosWidget.takeItem(numberOfFunctions - 1 - i)
             self.listaFiltros.pop(numberOfFunctions - 1 - i)
+
+        self.filtroComboBox.clear()
+        for i in range(len(self.listaFiltros)):
+            self.filtroComboBox.addItem(self.listaFiltros[i].nombre)
 
 
 

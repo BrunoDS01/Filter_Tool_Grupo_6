@@ -409,7 +409,14 @@ class FilterClass:
     def getPolesZeros(self):
         return self.currentTransferFunction.poles, self.currentTransferFunction.zeros
 
+    def getSOS(self):
+        tf = self.currentTransferFunction.to_zpk()
+        z,p,k = tf.zeros, tf.poles, tf.gain
+        sos = ss.zpk2sos(z, p, k, pairing= 'minimal', analog=True)
 
+        print(sos)
+
+        return sos
 
 
 

@@ -34,7 +34,7 @@
            </size>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
@@ -821,6 +821,77 @@
        <attribute name="title">
         <string>División de etapas</string>
        </attribute>
+       <layout class="QGridLayout" name="gridLayout_26">
+        <item row="0" column="1">
+         <widget class="QGroupBox" name="etapaGanMagPlotBox">
+          <property name="title">
+           <string/>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_30"/>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QGroupBox" name="etapaGanFasPlot">
+          <property name="title">
+           <string/>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_31"/>
+         </widget>
+        </item>
+        <item row="0" column="0" rowspan="2">
+         <widget class="QGroupBox" name="groupBox_4">
+          <property name="maximumSize">
+           <size>
+            <width>300</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="title">
+           <string/>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_28">
+           <item row="0" column="0">
+            <layout class="QGridLayout" name="gridLayout_27">
+             <item row="0" column="1">
+              <widget class="QComboBox" name="filtroComboBox"/>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_4">
+               <property name="text">
+                <string>Seleccionar filtro</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0" colspan="2">
+              <widget class="QPushButton" name="obtenerEtapasButton">
+               <property name="text">
+                <string>Obtener etapas</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0" colspan="2">
+              <widget class="QListWidget" name="listaEtapasWidget">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="1" column="0">
+            <widget class="QPushButton" name="graficarRespEtapaButton">
+             <property name="text">
+              <string>Graficar respuesta en frecuencia</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
