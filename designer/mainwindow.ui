@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1150</width>
-    <height>739</height>
+    <width>954</width>
+    <height>755</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,7 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
+    <item row="0" column="2">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
        <number>0</number>
@@ -25,11 +25,97 @@
         <string>Aproximaciones</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_3">
-        <item row="0" column="0" rowspan="2">
+        <item row="0" column="3" rowspan="10">
+         <widget class="QTabWidget" name="tabWidget_2">
+          <property name="minimumSize">
+           <size>
+            <width>500</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="currentIndex">
+           <number>2</number>
+          </property>
+          <widget class="QWidget" name="tab">
+           <attribute name="title">
+            <string>Curvas de atenuación</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_4">
+            <item row="0" column="0">
+             <widget class="QGroupBox" name="atenMagPlotBox">
+              <property name="minimumSize">
+               <size>
+                <width>300</width>
+                <height>300</height>
+               </size>
+              </property>
+              <property name="title">
+               <string/>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_2"/>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QGroupBox" name="atenFasePlotBox">
+              <property name="minimumSize">
+               <size>
+                <width>300</width>
+                <height>300</height>
+               </size>
+              </property>
+              <property name="title">
+               <string/>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_10"/>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_2">
+           <attribute name="title">
+            <string>Curvas de ganancia</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_6">
+            <item row="0" column="0">
+             <widget class="QGroupBox" name="ganMagPlotBox">
+              <property name="title">
+               <string/>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_8"/>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QGroupBox" name="ganFasePlotBox">
+              <property name="title">
+               <string/>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_11"/>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_3">
+           <attribute name="title">
+            <string>Polos y ceros</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_7">
+            <item row="0" column="0">
+             <widget class="QGroupBox" name="polosCerosPlotBox">
+              <property name="title">
+               <string/>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_12"/>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+        <item row="0" column="0" rowspan="10">
          <widget class="QGroupBox" name="groupBox_2">
           <property name="maximumSize">
            <size>
-            <width>300</width>
+            <width>200</width>
             <height>16777215</height>
            </size>
           </property>
@@ -43,15 +129,8 @@
                </property>
               </widget>
              </item>
-             <item row="6" column="0" colspan="2">
-              <widget class="QPushButton" name="pushButton">
-               <property name="text">
-                <string>Crear Plantilla</string>
-               </property>
-              </widget>
-             </item>
              <item row="0" column="1">
-              <widget class="QComboBox" name="comboBox_7">
+              <widget class="QComboBox" name="tipoFiltroComboBox">
                <item>
                 <property name="text">
                  <string>Pasa Bajos</string>
@@ -83,7 +162,7 @@
                 </size>
                </property>
                <property name="currentIndex">
-                <number>3</number>
+                <number>0</number>
                </property>
                <widget class="QWidget" name="page_3">
                 <layout class="QGridLayout" name="gridLayout_16">
@@ -188,7 +267,7 @@
                <widget class="QWidget" name="page_7">
                 <layout class="QGridLayout" name="gridLayout_18">
                  <item row="0" column="0" colspan="2">
-                  <widget class="QComboBox" name="comboBox_8">
+                  <widget class="QComboBox" name="BPTypeComboBox">
                    <item>
                     <property name="text">
                      <string>Anchos de Banda</string>
@@ -204,7 +283,7 @@
                  <item row="1" column="0" colspan="2">
                   <widget class="QStackedWidget" name="stackedWidget_4">
                    <property name="currentIndex">
-                    <number>1</number>
+                    <number>0</number>
                    </property>
                    <widget class="QWidget" name="page_8">
                     <layout class="QGridLayout" name="gridLayout_19">
@@ -340,7 +419,7 @@
                <widget class="QWidget" name="page_10">
                 <layout class="QFormLayout" name="formLayout">
                  <item row="0" column="0" colspan="2">
-                  <widget class="QComboBox" name="comboBox_9">
+                  <widget class="QComboBox" name="BSTypeComboBox">
                    <item>
                     <property name="text">
                      <string>Anchos de Banda</string>
@@ -356,7 +435,7 @@
                  <item row="1" column="0" colspan="2">
                   <widget class="QStackedWidget" name="stackedWidget_5">
                    <property name="currentIndex">
-                    <number>1</number>
+                    <number>0</number>
                    </property>
                    <widget class="QWidget" name="page_11">
                     <layout class="QGridLayout" name="gridLayout_21">
@@ -504,7 +583,24 @@
                </property>
               </widget>
              </item>
-             <item row="4" column="0" rowspan="2">
+             <item row="4" column="1" rowspan="3">
+              <widget class="QPlainTextEdit" name="aaVal">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>50</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="0" rowspan="3" colspan="2">
+              <widget class="QPushButton" name="crearPlantillaButton">
+               <property name="text">
+                <string>Crear Plantilla</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0" rowspan="3">
               <widget class="QLabel" name="label_72">
                <property name="maximumSize">
                 <size>
@@ -517,7 +613,129 @@
                </property>
               </widget>
              </item>
+             <item row="2" column="1" rowspan="2">
+              <widget class="QPlainTextEdit" name="apVal">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>50</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item row="11" column="0" colspan="2">
+              <widget class="QListWidget" name="listPlantillasWidget">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item row="13" column="0" rowspan="2">
+              <widget class="QPushButton" name="borrarPlantillasButton">
+               <property name="text">
+                <string>Borrar selec.</string>
+               </property>
+              </widget>
+             </item>
+             <item row="13" column="1" rowspan="2">
+              <widget class="QPushButton" name="borrarTodasPlantillasButton">
+               <property name="text">
+                <string>Borrar todas</string>
+               </property>
+              </widget>
+             </item>
+             <item row="15" column="0" colspan="2">
+              <widget class="QPushButton" name="graficarPlantillasButton">
+               <property name="text">
+                <string>Graficar plantillas selec.</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QGroupBox" name="groupBox">
+          <property name="maximumSize">
+           <size>
+            <width>200</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="title">
+           <string/>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_25">
+           <item row="0" column="0">
+            <layout class="QGridLayout" name="gridLayout_24">
+             <item row="5" column="0">
+              <widget class="QPushButton" name="borrarFiltrosButton">
+               <property name="text">
+                <string>Borrar selec.</string>
+               </property>
+              </widget>
+             </item>
+             <item row="11" column="0" rowspan="2">
+              <widget class="QPushButton" name="cambiarRangoFiltroButton">
+               <property name="text">
+                <string>Cambiar Rango</string>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="1">
+              <widget class="QLabel" name="label_3">
+               <property name="text">
+                <string>Max freq</string>
+               </property>
+              </widget>
+             </item>
+             <item row="10" column="0">
+              <widget class="QPushButton" name="cambiarOrdenFiltroButton">
+               <property name="text">
+                <string>Cambiar Orden</string>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="0">
+              <widget class="QLabel" name="label_2">
+               <property name="text">
+                <string>Min freq</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0" colspan="2">
+              <widget class="QListWidget" name="listFiltrosWidget">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0" rowspan="2" colspan="2">
+              <widget class="QPushButton" name="crearFiltroButton">
+               <property name="text">
+                <string>Crear Filtro</string>
+               </property>
+              </widget>
+             </item>
              <item row="11" column="1">
+              <widget class="QPlainTextEdit" name="rangoLP">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>50</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item row="10" column="1">
               <widget class="QTextBrowser" name="ordenLP">
                <property name="maximumSize">
                 <size>
@@ -527,21 +745,15 @@
                </property>
               </widget>
              </item>
-             <item row="12" column="0">
-              <widget class="QLabel" name="label_8">
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>50</height>
-                </size>
-               </property>
+             <item row="8" column="0" rowspan="2" colspan="2">
+              <widget class="QPushButton" name="graficarFiltrosButton">
                <property name="text">
-                <string>Rango de desnormalización</string>
+                <string>Graficar filtros</string>
                </property>
               </widget>
              </item>
-             <item row="7" column="1" rowspan="2">
-              <widget class="QComboBox" name="comboBox">
+             <item row="0" column="1">
+              <widget class="QComboBox" name="tipoAproxComboBox">
                <item>
                 <property name="text">
                  <string>Butterworth</string>
@@ -564,66 +776,36 @@
                </item>
               </widget>
              </item>
-             <item row="12" column="1">
-              <widget class="QPlainTextEdit" name="rangoLP">
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>50</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-             <item row="7" column="0" rowspan="2">
+             <item row="0" column="0">
               <widget class="QLabel" name="label_6">
                <property name="text">
                 <string>Tipo de filtro</string>
                </property>
               </widget>
              </item>
-             <item row="11" column="0">
-              <widget class="QLabel" name="label_7">
+             <item row="5" column="1">
+              <widget class="QPushButton" name="borrarTodosFiltrosButton">
+               <property name="text">
+                <string>Borrar todos</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="0">
+              <widget class="QPlainTextEdit" name="minFreq">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>50</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>Cambiar Orden</string>
-               </property>
-              </widget>
-             </item>
-             <item row="10" column="0" colspan="2">
-              <widget class="QPushButton" name="pushButton_5">
-               <property name="text">
-                <string>Crear Filtro</string>
-               </property>
-              </widget>
-             </item>
-             <item row="13" column="0" colspan="2">
-              <widget class="QPushButton" name="pushButton_2">
-               <property name="text">
-                <string>Aplicar cambios</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="1" rowspan="2">
-              <widget class="QPlainTextEdit" name="aaVal">
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>50</height>
+                 <height>20</height>
                 </size>
                </property>
               </widget>
              </item>
-             <item row="2" column="1" rowspan="2">
-              <widget class="QPlainTextEdit" name="apVal">
+             <item row="7" column="1">
+              <widget class="QPlainTextEdit" name="maxFreq">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>50</height>
+                 <height>20</height>
                 </size>
                </property>
               </widget>
@@ -631,95 +813,6 @@
             </layout>
            </item>
           </layout>
-         </widget>
-        </item>
-        <item row="1" column="2">
-         <widget class="QListWidget" name="listFiltrosWidget">
-          <property name="maximumSize">
-           <size>
-            <width>150</width>
-            <height>16777215</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QListWidget" name="listPlantillasWidget">
-          <property name="maximumSize">
-           <size>
-            <width>150</width>
-            <height>16777215</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1" rowspan="2">
-         <widget class="QTabWidget" name="tabWidget_2">
-          <property name="currentIndex">
-           <number>0</number>
-          </property>
-          <widget class="QWidget" name="tab">
-           <attribute name="title">
-            <string>Curvas de atenuación</string>
-           </attribute>
-           <layout class="QGridLayout" name="gridLayout_4">
-            <item row="0" column="0">
-             <widget class="QGroupBox" name="atenMagPlot">
-              <property name="minimumSize">
-               <size>
-                <width>500</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="title">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QGroupBox" name="atenFasePlot">
-              <property name="title">
-               <string/>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="tab_2">
-           <attribute name="title">
-            <string>Curvas de ganancia</string>
-           </attribute>
-           <layout class="QGridLayout" name="gridLayout_6">
-            <item row="0" column="0">
-             <widget class="QGroupBox" name="ganMagPlot">
-              <property name="title">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QGroupBox" name="ganFasePlot">
-              <property name="title">
-               <string/>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="tab_3">
-           <attribute name="title">
-            <string>Polos y ceros</string>
-           </attribute>
-           <layout class="QGridLayout" name="gridLayout_7">
-            <item row="0" column="0">
-             <widget class="QGroupBox" name="polosCerosPlot">
-              <property name="title">
-               <string/>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
          </widget>
         </item>
        </layout>
@@ -739,7 +832,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1150</width>
+     <width>954</width>
      <height>21</height>
     </rect>
    </property>
@@ -748,7 +841,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>comboBox_7</sender>
+   <sender>tipoFiltroComboBox</sender>
    <signal>currentIndexChanged(int)</signal>
    <receiver>stackedWidget_2</receiver>
    <slot>setCurrentIndex(int)</slot>
@@ -764,7 +857,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>comboBox_8</sender>
+   <sender>BPTypeComboBox</sender>
    <signal>currentIndexChanged(int)</signal>
    <receiver>stackedWidget_4</receiver>
    <slot>setCurrentIndex(int)</slot>
@@ -780,7 +873,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>comboBox_9</sender>
+   <sender>BSTypeComboBox</sender>
    <signal>currentIndexChanged(int)</signal>
    <receiver>stackedWidget_5</receiver>
    <slot>setCurrentIndex(int)</slot>

@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-tipo = "BS" # ....fp-...........f0.............fp+.......
+tipo = "BS"
 f0 = 16e3
 dP = 10e3
 dA = 600
@@ -22,7 +22,7 @@ if tipo == "LP":
     w, m, p = ss.bode(tF, w, n=1000)
     plt.semilogx(w / (2 * np.pi), m)
 
-    plt.fill([Fp/10, Fp, Fp, Fp/10], [0, 0, -Ap, -Ap], '0.9', lw=0)
+    plt.fill([Fp/2, Fp, Fp, Fp/2], [0, 0, -Ap, -Ap], '0.9', lw=0)
     plt.fill([Fa, Fa*10, Fa*10, Fa], [-Aa, -Aa, -Aa -10, -Aa -10], '0.9', lw=0)
 
 elif tipo == "HP":

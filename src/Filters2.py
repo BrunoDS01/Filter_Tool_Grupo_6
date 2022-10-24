@@ -8,6 +8,7 @@ Epsilon = 1e-5
 
 class FilterClass:
     def __init__(self):
+
         self.nombre = None
 
         self.transferFunction = ss.TransferFunction(1,1)    #transferencia final orden minimo
@@ -183,7 +184,7 @@ class FilterClass:
         self.filterType = "BS"
         self.filterName = btype
         self.rango = rango
-        #Fa = dFa / 2 + np.sqrt((dFa ** 2 + 4 * Fo ** 2)) / 2  # Hallo el valor de la frecuencia de atenuación más alta
+
 
         Wp = 1
         Wa = dFp / dFa
@@ -389,6 +390,24 @@ class FilterClass:
             b, a = ss.lp2bs(b1, a1, self.Fo * 2 * np.pi, self.dFp * 2 * np.pi)
 
         return ss.TransferFunction(b, a)
+
+    def getBode(self, w, WDado):
+        if WDado == None:
+            return ss.bode(self.currentTransferFunction, n = 1000)
+        else:
+            return ss.bode(self.currentTransferFunction, w, n=1000)
+
+    def getBodeNormalized(self, w, WDado):
+        if WDado == None:
+            return ss.bode(self.currentTFLP, n=1000)
+        else:
+            return ss.bode(self.currentTFLP, w, n=1000)
+
+    def getName(self):
+        return self.nombre
+
+    def getPolesZeros(self):
+        return self.currentTransferFunction.poles, self.currentTransferFunction.zeros
 
 
 

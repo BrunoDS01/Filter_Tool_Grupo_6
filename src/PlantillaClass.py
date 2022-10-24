@@ -1,3 +1,4 @@
+import numpy as np
 
 class PlantillaClass:
     def __init__(self):
@@ -7,7 +8,7 @@ class PlantillaClass:
         self.aa = None
         self.fp = None
         self.fa = None
-        self.f0 = None
+        self.fo = None
         self.fpx = None
         self.fpy = None
         self.fax = None
@@ -32,9 +33,8 @@ class PlantillaClass:
         self.ap = Ap
         self.aa = Aa
 
-    def crearPasaBandaFreq(self, Fo, Fpx, Fpy, Fax, Fay, Ap, Aa):
+    def crearPasaBandaFreq(self, Fpx, Fpy, Fax, Fay, Ap, Aa):
         self.tipoPlantilla = "BPF"
-        self.fo = Fo
         self.fpx = Fpx
         self.fpy = Fpy
         self.fax = Fax
@@ -42,16 +42,27 @@ class PlantillaClass:
         self.ap = Ap
         self.aa = Aa
 
-    def crearPasaBandaBW(self, dFp, dFa, Ap, Aa):
+    def crearPasaBandaBW(self, Fo, dFp, dFa, Ap, Aa):
         self.tipoPlantilla = "BPBW"
+        self.fo = Fo
         self.dfp = dFp
         self.dfa = dFa
         self.ap = Ap
         self.aa = Aa
 
-    def crearRechazaBandaFreq(self, Fo, Fpx, Fpy, Fax, Fay, Ap, Aa):
+        Fay = dFa / 2 + np.sqrt((dFa ** 2 + 4 * Fo ** 2)) / 2  # Hallo el valor de la frecuencia de atenuación más alta
+        Fax = Fay - dFa
+
+        Fpy = dFp / 2 + np.sqrt((dFp ** 2 + 4 * Fo ** 2)) / 2  # Hallo el valor de la frecuencia de atenuación más alta
+        Fpx = Fpy - dFp
+
+        self.fax = Fax
+        self.fay = Fay
+        self.fpx = Fpx
+        self.fpy = Fpy
+
+    def crearRechazaBandaFreq(self, Fpx, Fpy, Fax, Fay, Ap, Aa):
         self.tipoPlantilla = "BSF"
-        self.fo = Fo
         self.fpx = Fpx
         self.fpy = Fpy
         self.fax = Fax
@@ -59,9 +70,22 @@ class PlantillaClass:
         self.ap = Ap
         self.aa = Aa
 
-    def crearRechazaBandaBW(self, dFp, dFa, Ap, Aa):
+    def crearRechazaBandaBW(self, Fo, dFp, dFa, Ap, Aa):
         self.tipoPlantilla = "BSBW"
+
+        Fay = dFa / 2 + np.sqrt((dFa ** 2 + 4 * Fo ** 2)) / 2  # Hallo el valor de la frecuencia de atenuación más alta
+        Fax = Fay - dFa
+
+        Fpy = dFp / 2 + np.sqrt((dFp ** 2 + 4 * Fo ** 2)) / 2  # Hallo el valor de la frecuencia de atenuación más alta
+        Fpx = Fpy - dFp
+
+        self.fo = Fo
         self.dfp = dFp
         self.dfa = dFa
         self.ap = Ap
         self.aa = Aa
+
+        self.fax = Fax
+        self.fay = Fay
+        self.fpx = Fpx
+        self.fpy = Fpy
