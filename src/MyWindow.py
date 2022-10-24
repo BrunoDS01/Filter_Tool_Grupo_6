@@ -1,5 +1,5 @@
 # PyQt5 modules
-from PyQt5.QtWidgets import QMainWindow, QInputDialog, QListWidgetItem
+from PyQt5.QtWidgets import QMainWindow, QInputDialog, QListWidgetItem, QMessageBox
 from PyQt5.QtCore import Qt
 
 # Project modules
@@ -7,6 +7,8 @@ from src.ui.mainwindow import Ui_MainWindow
 from src.Filters2 import FilterClass
 import scipy.signal as ss
 import matplotlib.pyplot as plt
+import sympy as sp
+from sympy.abc import s
 import numpy as np
 from src.plottingClasses import BodePlot, PolosCerosPlot
 from src.PlantillaClass import PlantillaClass
@@ -23,6 +25,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.listaFiltros = []
         self.listaPlantillas = []
         self.listaSOS = []
+
+        self.currentEtapasTF = None
+        self.currentEtapasNum = sp.poly(1, s)
+        self.currentEtapasDen = sp.poly(1, s)
 
         # Configuración gráfica
 
@@ -44,6 +50,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.ganFasePlotBox.layout().addWidget(self.ganFasePlot.navToolBar)
         self.ganFasePlotBox.layout().addWidget(self.ganFasePlot)
 
+        # Gráficos de ganancia Etapas
+        self.etapaGanMagPlot = BodePlot(parent=self.etapaGanMagPlotBox)
+        self.etapaGanMagPlotBox.layout().addWidget(self.etapaGanMagPlot.navToolBar)
+        self.etapaGanMagPlotBox.layout().addWidget(self.etapaGanMagPlot)
+
+        self.etapaGanFasePlot = BodePlot(parent=self.etapaGanFasePlotBox)
+        self.etapaGanFasePlotBox.layout().addWidget(self.etapaGanFasePlot.navToolBar)
+        self.etapaGanFasePlotBox.layout().addWidget(self.etapaGanFasePlot)
+
         # Gráficos de polos y ceros
         self.polosCerosPlot = PolosCerosPlot(parent=self.polosCerosPlotBox)
         self.polosCerosPlotBox.layout().addWidget(self.polosCerosPlot.navToolBar)
@@ -55,6 +70,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.graficarPlantillasButton.clicked.connect(self.graficarPlantillasFiltros)
         self.graficarFiltrosButton.clicked.connect(self.graficarPlantillasFiltros)
         self.obtenerEtapasButton.clicked.connect(self.obtenerEtapas)
+        self.graficarRespEtapaButton.clicked.connect(self.graficarRespEtapa)
+        self.cambiarOrdenFiltroButton.clicked.connect(self.cambiarOrdenFiltro)
 
 
         self.borrarFiltrosButton.clicked.connect(self.deleteFiltros)
@@ -202,7 +219,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.filtroComboBox.addItem(self.listaFiltros[i].nombre)
 
 
-
     '''
         Grafica las plantillas seleccionadas
     '''
@@ -293,6 +309,48 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.polosCerosPlot.plotPolosCeros()
 
     '''
+        Cambiar orden del filtro
+    '''
+    def cambiarOrdenFiltro(self):
+        for i in range(len(self.listaFiltros)):
+            if self.listFiltrosWidget.item(i).checkState() == 2:
+                ordenActual = self.listaFiltros[i].currentN
+                minimoOrden = self.listaFiltros[i].n
+                ordenNuevo, ok = QInputDialog.getText(self, "Cambiar orden del filtro", 'Orden actual: '+ str(ordenActual)+', Orden mínimo: '+ str(minimoOrden))
+                if not ok:
+                    return
+                if len(ordenNuevo) < 1:
+                    ordenNuevo = ordenActual
+
+                ordenNuevo = int(ordenNuevo)
+                if ordenNuevo < minimoOrden:
+                    msgBox = QMessageBox()
+                    msgBox.setIcon(QMessageBox.Warning)
+                    msgBox.setText("El nuevo orden no puede ser menor al orden mínimo!")
+                    msgBox.setWindowTitle("Advertencia")
+                    msgBox.exec()
+                    return
+
+            self.listaFiltros[i].changeFilterOrder(ordenNuevo)
+
+    '''
+        Cambiar rango de desnormalización
+    '''
+    def cambiarRangoFiltro(self):
+        for i in range(len(self.listaFiltros)):
+            if self.listFiltrosWidget.item(i).checkState() == 2:
+                rangoActual = self.listaFiltros[i].rango
+                rangoNuevo, ok = QInputDialog.getText(self, "Cambiar rango de desnormalización", 'Rango actual: '+ str(rangoActual))
+                if not ok:
+                    return
+                if len(rangoNuevo) < 1:
+                    rangoNuevo = rangoActual
+
+                rangoNuevo = int(rangoActual)
+
+            self.listaFiltros[i].aplicarRangoDesnormalización(rangoNuevo)
+
+    '''
         Obtiene las etapas del filtro seleccionado
     '''
     def obtenerEtapas(self):
@@ -306,6 +364,51 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             item.setCheckState(Qt.Checked)
 
             self.listaEtapasWidget.addItem(item)
+
+    '''
+        Graficar respuesta en frecuencia etapas
+    '''
+    def graficarRespEtapa(self):
+        etapasNum = sp.poly(1, s)
+        etapasDen = sp.poly(1, s)
+        for i in range(len(self.listaSOS)):
+            if self.listaEtapasWidget.item(i).checkState() == 2:
+                newNum = (self.listaSOS[i][0]*s**2 + self.listaSOS[i][1]*s + self.listaSOS[i][2])
+                newDen = self.listaSOS[i][3]*s**2 + self.listaSOS[i][4]*s + self.listaSOS[i][5]
+                factor = 1
+
+                if self.listaSOS[i][2] != 0:
+                    factor /= self.listaSOS[i][2]
+                elif self.self.listaSOS[i][1] !=0:
+                    factor /= self.listaSOS[i][1]
+                elif self.listaSOS[i][0] != 0:
+                    factor /= self.listaSOS[i][0]
+
+                if self.listaSOS[i][5] != 0:
+                    factor *= self.listaSOS[i][5]
+                elif self.self.listaSOS[i][4] !=0:
+                    factor *= self.listaSOS[i][4]
+                elif self.listaSOS[i][3] != 0:
+                    factor *= self.listaSOS[i][3]
+
+                etapasNum = etapasNum * newNum * factor
+                etapasDen = etapasDen * newDen
+
+        num = np.array(etapasNum.all_coeffs(), dtype=float)  # coef num
+        den = np.array(etapasDen.all_coeffs(), dtype=float)  # coef den
+
+        self.currentEtapasTF = ss.TransferFunction(num, den)
+
+        self.etapaGanMagPlot.clear()
+        self.etapaGanFasePlot.clear()
+
+        w, m, p = ss.bode(self.currentEtapasTF, n = 1000)
+        label = 'Etapas'
+        self.etapaGanMagPlot.addCurveMag(w / (2 * np.pi), m, label)
+        self.etapaGanFasePlot.addCurveFase(w / (2 * np.pi), p, label)
+
+        self.etapaGanMagPlot.plotMag()
+        self.etapaGanFasePlot.plotFase()
 
 
     '''

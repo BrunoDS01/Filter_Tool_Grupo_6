@@ -20,7 +20,7 @@ class FilterClass:
 
         self.filterType = None          #Tipo de filtro
         self.filterName = None
-        self.n = 1
+        self.n = 1                    #Orden del filtro
         self.Wp = 1                  #Frecuencias del pasa bajos normalizado
         self.Wa = 2
         self.Ap = 3
@@ -59,6 +59,7 @@ class FilterClass:
         self.tfLP = ss.TransferFunction(b1,a1)
         self.currentTFLP = ss.TransferFunction(b1, a1)
         self.n = N
+        self.currentN = N
 
         b, a = ss.lp2lp(b1, a1, Fp * 2 * np.pi)
         self.transferFunction = ss.TransferFunction(b,a)
@@ -88,6 +89,7 @@ class FilterClass:
         self.tfLP = ss.TransferFunction(b1, a1)
         self.currentTFLP = ss.TransferFunction(b1, a1)
         self.n = N
+        self.currentN = N
 
         b, a = ss.lp2hp(b1,a1, Fp * 2 * np.pi)
 
@@ -121,6 +123,7 @@ class FilterClass:
         self.tfLP = ss.TransferFunction(b1, a1)
         self.currentTFLP = ss.TransferFunction(b1, a1)
         self.n = N
+        self.currentN = N
 
         b, a = ss.lp2bp(b1, a1, Fo * 2 * np.pi, dFp * 2 *np.pi)
 
@@ -168,6 +171,7 @@ class FilterClass:
         self.tfLP = ss.TransferFunction(b1, a1)
         self.currentTFLP = ss.TransferFunction(b1, a1)
         self.n = N
+        self.currentN = N
 
 
         b, a = ss.lp2bp(b1, a1, Fo * 2 * np.pi, dFp * 2 * np.pi)
@@ -201,6 +205,7 @@ class FilterClass:
         self.tfLP = ss.TransferFunction(b1, a1)
         self.currentTFLP = ss.TransferFunction(b1, a1)
         self.n = N
+        self.currentN = N
 
         b, a = ss.lp2bs(b1, a1, Fo * 2 * np.pi, dFp * 2 * np.pi)
 
@@ -245,6 +250,7 @@ class FilterClass:
         self.tfLP = ss.TransferFunction(b1, a1)
         self.currentTFLP = ss.TransferFunction(b1, a1)
         self.n = N
+        self.currentN = N
 
         b, a = ss.lp2bs(b1, a1, Fo * 2 * np.pi, dFp * 2 * np.pi)
 
