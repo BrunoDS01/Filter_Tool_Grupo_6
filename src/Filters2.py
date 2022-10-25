@@ -15,7 +15,7 @@ class FilterClass:
         self.tfLP = ss.TransferFunction(1,1)               #transferencia del pasabajos orden minimo
 
         self.currentTransferFunction = ss.TransferFunction(1,1)  # transferencia final
-        self.currentTFLP = ss.TransferFunction(1,1)             #transferencia pasa bajos
+        self.currentTFLP = ss.TransferFunction(1,1)             #transferencia pasa bajos (cambia con el orden)
         self.currentLPRango = ss.TransferFunction(1,1)          #transferencia pasa bajos con rango
 
         self.filterType = None          #Tipo de filtro
@@ -64,7 +64,7 @@ class FilterClass:
         b, a = ss.lp2lp(b1, a1, Fp * 2 * np.pi)
         self.transferFunction = ss.TransferFunction(b,a)
 
-        self.currentTransferFunction = self.aplicarRangoDesnormalización(rango)
+        self.currentTransferFunction = self.aplicarRangoDesnormalizacion(rango)
 
         return self.currentTransferFunction
 
@@ -94,7 +94,7 @@ class FilterClass:
         b, a = ss.lp2hp(b1,a1, Fp * 2 * np.pi)
 
         self.transferFunction = ss.TransferFunction(b, a)
-        self.currentTransferFunction = self.aplicarRangoDesnormalización(rango)
+        self.currentTransferFunction = self.aplicarRangoDesnormalizacion(rango)
 
         return self.currentTransferFunction
 
@@ -128,7 +128,7 @@ class FilterClass:
         b, a = ss.lp2bp(b1, a1, Fo * 2 * np.pi, dFp * 2 *np.pi)
 
         self.transferFunction = ss.TransferFunction(b, a)
-        self.currentTransferFunction = self.aplicarRangoDesnormalización(rango)
+        self.currentTransferFunction = self.aplicarRangoDesnormalizacion(rango)
 
         return self.currentTransferFunction
 
@@ -177,7 +177,7 @@ class FilterClass:
         b, a = ss.lp2bp(b1, a1, Fo * 2 * np.pi, dFp * 2 * np.pi)
 
         self.transferFunction = ss.TransferFunction(b, a)
-        self.currentTransferFunction = self.aplicarRangoDesnormalización(rango)
+        self.currentTransferFunction = self.aplicarRangoDesnormalizacion(rango)
 
         return self.currentTransferFunction
 
@@ -210,7 +210,7 @@ class FilterClass:
         b, a = ss.lp2bs(b1, a1, Fo * 2 * np.pi, dFp * 2 * np.pi)
 
         self.transferFunction = ss.TransferFunction(b, a)
-        self.currentTransferFunction = self.aplicarRangoDesnormalización(rango)
+        self.currentTransferFunction = self.aplicarRangoDesnormalizacion(rango)
 
         return self.currentTransferFunction
 
@@ -255,7 +255,7 @@ class FilterClass:
         b, a = ss.lp2bs(b1, a1, Fo * 2 * np.pi, dFp * 2 * np.pi)
 
         self.transferFunction = ss.TransferFunction(b, a)
-        self.currentTransferFunction = self.aplicarRangoDesnormalización(rango)
+        self.currentTransferFunction = self.aplicarRangoDesnormalizacion(rango)
 
         return self.currentTransferFunction
 
@@ -313,7 +313,7 @@ class FilterClass:
             b1, a1 = ss.ellip(N, self.Ap, self.Aa, self.Wp, 'lowpass', analog=True) #debería funcionar
             self.currentTFLP = ss.TransferFunction(b1, a1)
 
-        self.currentTransferFunction = self.aplicarRangoDesnormalización(self.rango)
+        self.currentTransferFunction = self.aplicarRangoDesnormalizacion(self.rango)
 
         return self.currentTransferFunction
 
@@ -343,7 +343,9 @@ class FilterClass:
     '''
         Aplicar el rango de desnormalización. (rango entre 0 y 1)
     '''
-    def aplicarRangoDesnormalización(self, rango):
+    def aplicarRangoDesnormalizacion(self, rango):
+
+        self.rango = rango
 
         Wx = self.findWx()
         escale = (self.Wa / Wx)**(rango)
@@ -419,8 +421,6 @@ class FilterClass:
         tf = self.currentTransferFunction.to_zpk()
         z,p,k = tf.zeros, tf.poles, tf.gain
         sos = ss.zpk2sos(z, p, k, pairing= 'minimal', analog=True)
-
-        print(sos)
 
         return sos
 

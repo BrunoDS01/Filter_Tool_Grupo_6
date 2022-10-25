@@ -6,12 +6,12 @@ from PyQt5.QtCore import Qt
 from src.ui.mainwindow import Ui_MainWindow
 from src.Filters2 import FilterClass
 import scipy.signal as ss
-import matplotlib.pyplot as plt
 import sympy as sp
 from sympy.abc import s
 import numpy as np
-from src.plottingClasses import BodePlot, PolosCerosPlot
+from src.plottingClasses import BodePlot, PolosCerosPlot, TemporalPlot
 from src.PlantillaClass import PlantillaClass
+from src.MPLLaTexClass import MPLTexText
 
 class MainWindow(QMainWindow, Ui_MainWindow):
 
@@ -25,7 +25,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.listaFiltros = []
         self.listaPlantillas = []
         self.listaSOS = []
+        self.listaEtapas = []
 
+        self.filtroParaEtapas = None
         self.currentEtapasTF = None
         self.currentEtapasNum = sp.poly(1, s)
         self.currentEtapasDen = sp.poly(1, s)
@@ -50,6 +52,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.ganFasePlotBox.layout().addWidget(self.ganFasePlot.navToolBar)
         self.ganFasePlotBox.layout().addWidget(self.ganFasePlot)
 
+        # Gráfico curva normalizada
+        self.curvaNormalizadaPlot= BodePlot(parent=self.curvaNormalizadaPlotBox)
+        self.curvaNormalizadaPlotBox.layout().addWidget(self.curvaNormalizadaPlot.navToolBar)
+        self.curvaNormalizadaPlotBox.layout().addWidget(self.curvaNormalizadaPlot)
+
         # Gráficos de ganancia Etapas
         self.etapaGanMagPlot = BodePlot(parent=self.etapaGanMagPlotBox)
         self.etapaGanMagPlotBox.layout().addWidget(self.etapaGanMagPlot.navToolBar)
@@ -64,6 +71,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.polosCerosPlotBox.layout().addWidget(self.polosCerosPlot.navToolBar)
         self.polosCerosPlotBox.layout().addWidget(self.polosCerosPlot)
 
+        #Gráfico respuesta al escalón
+        self.respuestaEscalonPlot = TemporalPlot(parent=self.respuestaEscalonPlotBox)
+        self.respuestaEscalonPlotBox.layout().addWidget(self.respuestaEscalonPlot.navToolBar)
+        self.respuestaEscalonPlotBox.layout().addWidget(self.respuestaEscalonPlot)
+
+        # Textos Latex
+        self.ordenQLatex = MPLTexText(self.ordenQLatexBox)
+
+
         # Configuración de las pestañas y clicks
         self.crearPlantillaButton.clicked.connect(self.crearPlantilla)
         self.crearFiltroButton.clicked.connect(self.crearFiltro)
@@ -72,12 +88,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.obtenerEtapasButton.clicked.connect(self.obtenerEtapas)
         self.graficarRespEtapaButton.clicked.connect(self.graficarRespEtapa)
         self.cambiarOrdenFiltroButton.clicked.connect(self.cambiarOrdenFiltro)
+        self.ordenQButton.clicked.connect(self.verOrdenQ)
+        self.cambiarRangoFiltroButton.clicked.connect(self.cambiarRangoFiltro)
 
 
         self.borrarFiltrosButton.clicked.connect(self.deleteFiltros)
         self.borrarTodosFiltrosButton.clicked.connect(self.deleteAllFiltros)
         self.borrarPlantillasButton.clicked.connect(self.deletePlantillas)
         self.borrarTodasPlantillasButton.clicked.connect(self.deleteAllPlantillas)
+        self.borrarEtapasButton.clicked.connect(self.deleteEtapas)
 
 
     def crearPlantilla(self):
@@ -86,61 +105,61 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         text = self.tipoFiltroComboBox.currentText()
 
         if text == "Pasa Bajos":
-            fp = float(self.fpLP.toPlainText())
-            fa = float(self.faLP.toPlainText())
-            ap= float(self.apVal.toPlainText())
-            aa = float(self.aaVal.toPlainText())
+            fp = float(self.fpLP.text())
+            fa = float(self.faLP.text())
+            ap= float(self.apVal.text())
+            aa = float(self.aaVal.text())
 
 
             newPlantilla.crearPasaBajos(fp, fa, ap, aa)
 
         elif text == "Pasa Altos":
-            fp = float(self.fpHP.toPlainText())
-            fa = float(self.faHP.toPlainText())
-            ap = float(self.apVal.toPlainText())
-            aa = float(self.aaVal.toPlainText())
+            fp = float(self.fpHP.text())
+            fa = float(self.faHP.text())
+            ap = float(self.apVal.text())
+            aa = float(self.aaVal.text())
 
             newPlantilla.crearPasaAltos(fp, fa, ap, aa)
 
         elif text == "Pasa Banda":
             tipo = self.BPTypeComboBox.currentText()
             if tipo == "Anchos de Banda":
-                fo = float(self.f0BP.toPlainText())
-                dfp = float(self.dFpBP.toPlainText())
-                dfa = float(self.dFaBP.toPlainText())
-                ap = float(self.apVal.toPlainText())
-                aa = float(self.aaVal.toPlainText())
+                fo = float(self.f0BP.text())
+                dfp = float(self.dFpBP.text())
+                dfa = float(self.dFaBP.text())
+                ap = float(self.apVal.text())
+                aa = float(self.aaVal.text())
 
                 newPlantilla.crearPasaBandaBW(fo, dfp, dfa, ap, aa)
 
             elif tipo == "Frecuencias":
-                fpx = float(self.fpXBP.toPlainText())
-                fpy = float(self.fpYBP.toPlainText())
-                fax = float(self.faXBP.toPlainText())
-                fay = float(self.faYBP.toPlainText())
-                ap = float(self.apVal.toPlainText())
-                aa = float(self.aaVal.toPlainText())
+                fpx = float(self.fpXBP.text())
+                fpy = float(self.fpYBP.text())
+                fax = float(self.faXBP.text())
+                fay = float(self.faYBP.text())
+                ap = float(self.apVal.text())
+                aa = float(self.aaVal.text())
 
                 newPlantilla.crearPasaBandaFreq(fpx, fpy, fax, fay, ap, aa)
 
         elif text == "Rechaza Banda":
             tipo = self.BSTypeComboBox.currentText()
             if tipo == "Anchos de Banda":
-                fo = float(self.f0BS.toPlainText())
-                dfp = float(self.dFpBS.toPlainText())
-                dfa = float(self.dFaBS.toPlainText())
-                ap = float(self.apVal.toPlainText())
-                aa = float(self.aaVal.toPlainText())
+                fo = float(self.f0BS.text())
+                dfp = float(self.dFpBS.text())
+                dfa = float(self.dFaBS.text())
+                ap = float(self.apVal.text())
+                aa = float(self.aaVal.text())
 
                 newPlantilla.crearRechazaBandaBW(fo,dfp, dfa, ap, aa)
 
             elif tipo == "Frecuencias":
-                fpx = float(self.fpXBS.toPlainText())
-                fpy = float(self.fpYBS.toPlainText())
-                fax = float(self.faXBS.toPlainText())
-                fay = float(self.faYBS.toPlainText())
-                ap = float(self.apVal.toPlainText())
-                aa = float(self.aaVal.toPlainText())
+                fpx = float(self.fpXBS.text())
+                fpy = float(self.fpYBS.text())
+                fax = float(self.faXBS.text())
+                fay = float(self.faYBS.text())
+                ap = float(self.apVal.text())
+                aa = float(self.aaVal.text())
 
                 newPlantilla.crearRechazaBandaFreq(fpx, fpy, fax, fay, ap, aa)
 
@@ -162,6 +181,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def crearFiltro(self):
         text = self.tipoAproxComboBox.currentText()
+        rango = float(self.rangoPorcentaje.text()) / 100
 
         if text == "Butterworth":
             text = "butter"
@@ -178,22 +198,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 p = self.listaPlantillas[i]
 
                 if p.tipoPlantilla == "LP":
-                    filtroActual.getLPTransferFunction(p.fp, p.fa, p.ap, p.aa, text, 0)
+                    filtroActual.getLPTransferFunction(p.fp, p.fa, p.ap, p.aa, text, rango)
 
                 elif p.tipoPlantilla == "HP":
-                    filtroActual.getHPTransferFunction(p.fp, p.fa, p.ap, p.aa, text, 0)
+                    filtroActual.getHPTransferFunction(p.fp, p.fa, p.ap, p.aa, text, rango)
 
                 elif p.tipoPlantilla == "BPF":
-                    filtroActual.getBPTransferFunctionFreq([p.fpx,p.fpy], [p.fax, p.fay], p.ap, p.aa, text, 0)
+                    filtroActual.getBPTransferFunctionFreq([p.fpx,p.fpy], [p.fax, p.fay], p.ap, p.aa, text, rango)
 
                 elif p.tipoPlantilla == "BPBW":
-                    filtroActual.getBPTransferFunctionBW(p.fo, p.dfp, p.dfa, p.ap, p.aa, text, 0)
+                    filtroActual.getBPTransferFunctionBW(p.fo, p.dfp, p.dfa, p.ap, p.aa, text, rango)
 
                 elif p.tipoPlantilla == "BSF":
-                    filtroActual.getBSTransferFunctionFreq([p.fpx, p.fpy], [p.fax, p.fay], p.ap, p.aa, text, 0)
+                    filtroActual.getBSTransferFunctionFreq([p.fpx, p.fpy], [p.fax, p.fay], p.ap, p.aa, text, rango)
 
                 elif p.tipoPlantilla == "BSBW":
-                    filtroActual.getBSTransferFunctionBW(p.fo, p.dfp, p.dfa, p.ap, p.aa, text, 0)
+                    filtroActual.getBSTransferFunctionBW(p.fo, p.dfp, p.dfa, p.ap, p.aa, text, rango)
 
 
 
@@ -217,6 +237,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.filtroComboBox.clear()
         for i in range(len(self.listaFiltros)):
             self.filtroComboBox.addItem(self.listaFiltros[i].nombre)
+
+        self.ordenQComboBox.clear()
+        for i in range(len(self.listaFiltros)):
+            self.ordenQComboBox.addItem(self.listaFiltros[i].nombre)
 
 
     '''
@@ -267,8 +291,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for i in range(len(self.listaFiltros)):
             if self.listFiltrosWidget.item(i).checkState() == 2:
                 try:
-                    minFreq = float(self.minFreq.toPlainText())
-                    maxFreq = float(self.maxFreq.toPlainText())
+                    minFreq = float(self.minFreq.text())
+                    maxFreq = float(self.maxFreq.text())
                     w1 = np.logspace(np.log10(minFreq * 2 * np.pi), np.log10(maxFreq * 2 * np.pi), 1000)
                     x = True
                 except:
@@ -281,6 +305,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.ganFasePlot.addCurveFase(w/(2*np.pi), p, label)
                 self.atenFasePlot.addCurveFaseAten(w/(2*np.pi),p, label)
 
+                # grafico la plantilla normalizada
+                w2, m2, p2 = self.listaFiltros[i].getBodeNormalized(None, False)
+                self.curvaNormalizadaPlot.addNormalizedMagCurve(w2, 10**(m2/20), label)
+
     def graficarPolosZeros(self):
         for i in range(len(self.listaFiltros)):
             if self.listFiltrosWidget.item(i).checkState() == 2:
@@ -288,6 +316,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 label = self.listaFiltros[i].getName()
                 self.polosCerosPlot.addCurvePolosCeros(polos, ceros, label)
 
+    def graficarRespuestaEscalon(self):
+        for i in range(len(self.listaFiltros)):
+            if self.listFiltrosWidget.item(i).checkState() == 2:
+                t, y = ss.step(self.listaFiltros[i].currentTransferFunction, N = 1000)
+                label = self.listaFiltros[i].getName()
+                self.respuestaEscalonPlot.addTemporalPlot(t,y,label)
 
 
     def graficarPlantillasFiltros(self):
@@ -295,18 +329,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.ganFasePlot.clear()
         self.atenMagPlot.clear()
         self.atenFasePlot.clear()
+        self.curvaNormalizadaPlot.clear()
         self.polosCerosPlot.clear()
+        self.respuestaEscalonPlot.clear()
 
         self.graficarPlantillas()
         self.graficarFiltros()
         self.graficarPolosZeros()
+        self.graficarRespuestaEscalon()
 
 
         self.ganMagPlot.plotMag()
         self.ganFasePlot.plotFase()
         self.atenMagPlot.plotMag()
         self.atenFasePlot.plotFase()
+        self.curvaNormalizadaPlot.plotNormalizedMag()
         self.polosCerosPlot.plotPolosCeros()
+        self.respuestaEscalonPlot.plotTemporalPlot()
 
     '''
         Cambiar orden del filtro
@@ -331,7 +370,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     msgBox.exec()
                     return
 
-            self.listaFiltros[i].changeFilterOrder(ordenNuevo)
+                self.listaFiltros[i].changeFilterOrder(ordenNuevo)
 
     '''
         Cambiar rango de desnormalización
@@ -340,15 +379,40 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for i in range(len(self.listaFiltros)):
             if self.listFiltrosWidget.item(i).checkState() == 2:
                 rangoActual = self.listaFiltros[i].rango
-                rangoNuevo, ok = QInputDialog.getText(self, "Cambiar rango de desnormalización", 'Rango actual: '+ str(rangoActual))
+                rangoNuevo, ok = QInputDialog.getText(self, "Cambiar rango de desnormalización", 'Rango actual: '+ str(rangoActual * 100))
                 if not ok:
                     return
                 if len(rangoNuevo) < 1:
                     rangoNuevo = rangoActual
 
-                rangoNuevo = int(rangoActual)
+                rangoNuevo = float(rangoNuevo)/100
 
-            self.listaFiltros[i].aplicarRangoDesnormalización(rangoNuevo)
+                self.listaFiltros[i].aplicarRangoDesnormalizacion(rangoNuevo)
+
+    '''
+        Muestra orden mínimo, actual y Q
+    '''
+    def verOrdenQ(self):
+        index = self.ordenQComboBox.currentIndex()
+        filtroActual = self.listaFiltros[index]
+
+        Nmin = filtroActual.n
+        Nactual = filtroActual.currentN
+
+        poles = filtroActual.currentTransferFunction.poles
+        maxQ = 0
+
+        for i in range(len(poles)):
+            q = np.abs(np.abs(poles[i]) / (2*np.real(poles[i])))
+            if q > maxQ:
+                maxQ = q
+
+        stri = "Orden mínimo: "+ "$" + str(Nmin) +"$\n"
+        stri += "Orden actual: " + "$" + str(Nactual) +"$\n"
+        stri += "Máximo Q: " + "$" + str(maxQ) +"$\n"
+
+        self.ordenQLatex.updateTex(stri)
+
 
     '''
         Obtiene las etapas del filtro seleccionado
@@ -357,9 +421,32 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         index = self.filtroComboBox.currentIndex()
         filtroActual = self.listaFiltros[index]
 
+        self.filtroParaEtapas = filtroActual
         self.listaSOS = filtroActual.getSOS()
 
         for i in range(len(self.listaSOS)):
+            factor = 1
+
+            if self.listaSOS[i][2] != 0:
+                factor /= self.listaSOS[i][2]
+            elif self.listaSOS[i][1] != 0:
+                factor /= self.listaSOS[i][1]
+            elif self.listaSOS[i][0] != 0:
+                factor /= self.listaSOS[i][0]
+
+            if self.listaSOS[i][5] != 0:
+                factor *= self.listaSOS[i][5]
+            elif self.listaSOS[i][4] != 0:
+                factor *= self.listaSOS[i][4]
+            elif self.listaSOS[i][3] != 0:
+                factor *= self.listaSOS[i][3]
+
+            num = [self.listaSOS[i][0]*factor, self.listaSOS[i][1]*factor, self.listaSOS[i][2]*factor]
+            den = [self.listaSOS[i][3], self.listaSOS[i][4], self.listaSOS[i][5]]
+
+            tf = ss.TransferFunction(num, den)
+            self.listaEtapas.append(tf)
+
             item = QListWidgetItem("Etapa " + str(i))
             item.setCheckState(Qt.Checked)
 
@@ -369,6 +456,30 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Graficar respuesta en frecuencia etapas
     '''
     def graficarRespEtapa(self):
+        totalTF = self.filtroParaEtapas.currentTransferFunction
+
+        numT = totalTF.num
+        denT = totalTF.den
+
+        ganTotal = 1
+
+        for i in range(len(numT)-1, -1, -1):
+            if numT[i] != 0.0:
+                ganTotal *= numT[i]
+                break
+
+        for i in range(len(denT)-1, -1, -1):
+            if denT[i] != 0.0:
+                ganTotal *= 1 / denT[i]
+                break
+
+        contador = 0
+        for i in range(len(self.listaSOS)):
+            if self.listaEtapasWidget.item(i).checkState() == 2:
+                contador += 1
+
+        factorTotal = ganTotal ** (1/contador)
+
         etapasNum = sp.poly(1, s)
         etapasDen = sp.poly(1, s)
         for i in range(len(self.listaSOS)):
@@ -379,19 +490,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 if self.listaSOS[i][2] != 0:
                     factor /= self.listaSOS[i][2]
-                elif self.self.listaSOS[i][1] !=0:
+                elif self.listaSOS[i][1] !=0:
                     factor /= self.listaSOS[i][1]
                 elif self.listaSOS[i][0] != 0:
                     factor /= self.listaSOS[i][0]
 
                 if self.listaSOS[i][5] != 0:
                     factor *= self.listaSOS[i][5]
-                elif self.self.listaSOS[i][4] !=0:
+                elif self.listaSOS[i][4] !=0:
                     factor *= self.listaSOS[i][4]
                 elif self.listaSOS[i][3] != 0:
                     factor *= self.listaSOS[i][3]
 
-                etapasNum = etapasNum * newNum * factor
+                etapasNum = etapasNum * newNum * factor * factorTotal
                 etapasDen = etapasDen * newDen
 
         num = np.array(etapasNum.all_coeffs(), dtype=float)  # coef num
@@ -433,9 +544,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if self.listFiltrosWidget.item(numberOfFunctions-1-i).checkState() == 2:
                 self.listFiltrosWidget.takeItem(numberOfFunctions-1-i)
                 self.listaFiltros.pop(numberOfFunctions-1-i)
+
         self.filtroComboBox.clear()
         for i in range(len(self.listaFiltros)):
             self.filtroComboBox.addItem(self.listaFiltros[i].nombre)
+
+        self.ordenQComboBox.clear()
+        for i in range(len(self.listaFiltros)):
+            self.ordenQComboBox.addItem(self.listaFiltros[i].nombre)
 
     def deleteAllFiltros(self):
         numberOfFunctions = len(self.listaFiltros)
@@ -446,6 +562,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.filtroComboBox.clear()
         for i in range(len(self.listaFiltros)):
             self.filtroComboBox.addItem(self.listaFiltros[i].nombre)
+
+        self.ordenQComboBox.clear()
+        for i in range(len(self.listaFiltros)):
+            self.ordenQComboBox.addItem(self.listaFiltros[i].nombre)
+
+    def deleteEtapas(self):
+        numberOfFunctions = len(self.listaSOS)
+        for i in range(numberOfFunctions):
+            self.listaEtapasWidget.takeItem(numberOfFunctions - 1 - i)
+            self.listaEtapas.pop(numberOfFunctions - 1 - i)
 
 
 

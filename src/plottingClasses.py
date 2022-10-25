@@ -60,12 +60,16 @@ class BodePlot(MplCanvas):
     def addBSPlantillaAten(self, Fpx, Fpy, Fax, Fay, Ap, Aa):
         self.addBSPlantilla(Fpx, Fpy, Fax, Fay, -Ap, -Aa)
 
+    def addNormalizedMagCurve(self, w, mag, label):
+        self.axes.plot(w, mag, label=label)
+
     def plotMag(self):
         self.axes.set_xlabel('Frecuencia [Hz]')
         self.axes.set_ylabel('|H| [dB]')
         self.axes.set_xscale('log')
 
         self.axes.legend(loc=0)
+        self.axes.grid(visible = True, which = 'both', axis = 'both')
 
         self.fig.canvas.draw()
 
@@ -73,8 +77,19 @@ class BodePlot(MplCanvas):
         self.axes.set_xlabel('Frecuencia [Hz]')
         self.axes.set_ylabel('Fase (°)')
         self.axes.set_xscale('log')
+        self.axes.grid(visible=True, which='both', axis='both')
 
         self.axes.legend(loc=0)
+
+        self.fig.canvas.draw()
+
+    def plotNormalizedMag(self):
+        self.axes.set_xlabel('Frecuencia [rad/s]')
+        self.axes.set_ylabel('Ganancia [veces]')
+        self.axes.set_xscale('linear')
+
+        self.axes.legend(loc=0)
+        self.axes.grid(visible=True, which='both', axis='both')
 
         self.fig.canvas.draw()
 
@@ -102,6 +117,24 @@ class PolosCerosPlot(MplCanvas):
         self.axes.set_xlabel('σ')
 
         self.axes.legend(loc=0)
+
+        self.fig.canvas.draw()
+
+class TemporalPlot(MplCanvas):
+    def __init__(self, parent=None):
+        if parent is not None:
+            super().__init__(parent)
+
+    def addTemporalPlot(self, t, y, label):
+        self.axes.plot(t, y, label = label)
+
+    def plotTemporalPlot(self):
+        self.axes.set_xlabel('Tiempo [s]')
+        self.axes.set_ylabel('Tensión [V]')
+        self.axes.set_xscale('linear')
+
+        self.axes.legend(loc=0)
+        self.axes.grid(visible=True, which='both', axis='both')
 
         self.fig.canvas.draw()
 
