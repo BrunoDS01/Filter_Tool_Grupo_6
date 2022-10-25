@@ -505,6 +505,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 etapasNum = etapasNum * newNum * factor * factorTotal
                 etapasDen = etapasDen * newDen
 
+
         num = np.array(etapasNum.all_coeffs(), dtype=float)  # coef num
         den = np.array(etapasDen.all_coeffs(), dtype=float)  # coef den
 
