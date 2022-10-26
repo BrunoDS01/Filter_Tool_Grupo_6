@@ -26,6 +26,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.listaPlantillas = []
         self.listaSOS = []
         self.listaEtapas = []
+        self.listaGananciaEtapas = []
+        self.listaGananciaNominalEtapas = []
 
         self.filtroParaEtapas = None
         self.currentEtapasTF = None
@@ -71,6 +73,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.polosCerosPlotBox.layout().addWidget(self.polosCerosPlot.navToolBar)
         self.polosCerosPlotBox.layout().addWidget(self.polosCerosPlot)
 
+        self.polosCerosEtapasPlot = PolosCerosPlot(parent=self.polosCerosEtapasPlotBox)
+        self.polosCerosEtapasPlotBox.layout().addWidget(self.polosCerosEtapasPlot.navToolBar)
+        self.polosCerosEtapasPlotBox.layout().addWidget(self.polosCerosEtapasPlot)
+
+        self.infoPoloCeroPlot = PolosCerosPlot(parent=self.infoPoloCeroPlotBox)
+        self.infoPoloCeroPlotBox.layout().addWidget(self.infoPoloCeroPlot.navToolBar)
+        self.infoPoloCeroPlotBox.layout().addWidget(self.infoPoloCeroPlot)
+
         #Gráfico respuesta al escalón
         self.respuestaEscalonPlot = TemporalPlot(parent=self.respuestaEscalonPlotBox)
         self.respuestaEscalonPlotBox.layout().addWidget(self.respuestaEscalonPlot.navToolBar)
@@ -78,6 +88,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Textos Latex
         self.ordenQLatex = MPLTexText(self.ordenQLatexBox)
+        self.infoLatex = MPLTexText(self.infoLatexBox)
 
 
         # Configuración de las pestañas y clicks
@@ -90,6 +101,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.cambiarOrdenFiltroButton.clicked.connect(self.cambiarOrdenFiltro)
         self.ordenQButton.clicked.connect(self.verOrdenQ)
         self.cambiarRangoFiltroButton.clicked.connect(self.cambiarRangoFiltro)
+        self.mostrarInfoButton.clicked.connect(self.mostrarInfoEtapas)
+        self.cambiarGananciaEtapasButton.clicked.connect(self.cambiarGananciaEtapas)
 
 
         self.borrarFiltrosButton.clicked.connect(self.deleteFiltros)
@@ -105,61 +118,158 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         text = self.tipoFiltroComboBox.currentText()
 
         if text == "Pasa Bajos":
-            fp = float(self.fpLP.text())
-            fa = float(self.faLP.text())
-            ap= float(self.apVal.text())
-            aa = float(self.aaVal.text())
+            try:
+                fp = float(self.fpLP.text())
+                fa = float(self.faLP.text())
+                ap= float(self.apVal.text())
+                aa = float(self.aaVal.text())
+            except:
+                msgBox = QMessageBox()
+                msgBox.setIcon(QMessageBox.Warning)
+                msgBox.setText("Ingresar un número valido")
+                msgBox.setWindowTitle("Advertencia")
+                msgBox.exec()
+                return
 
+            if fp >= fa:
+                msgBox = QMessageBox()
+                msgBox.setIcon(QMessageBox.Warning)
+                msgBox.setText("Ingresar frecuencias válidas")
+                msgBox.setWindowTitle("Advertencia")
+                msgBox.exec()
+                return
 
             newPlantilla.crearPasaBajos(fp, fa, ap, aa)
 
         elif text == "Pasa Altos":
-            fp = float(self.fpHP.text())
-            fa = float(self.faHP.text())
-            ap = float(self.apVal.text())
-            aa = float(self.aaVal.text())
+            try:
+                fp = float(self.fpHP.text())
+                fa = float(self.faHP.text())
+                ap = float(self.apVal.text())
+                aa = float(self.aaVal.text())
+
+            except:
+                msgBox = QMessageBox()
+                msgBox.setIcon(QMessageBox.Warning)
+                msgBox.setText("Ingresar un número valido")
+                msgBox.setWindowTitle("Advertencia")
+                msgBox.exec()
+                return
+            if fa >= fp:
+                msgBox = QMessageBox()
+                msgBox.setIcon(QMessageBox.Warning)
+                msgBox.setText("Ingresar frecuencias válidas")
+                msgBox.setWindowTitle("Advertencia")
+                msgBox.exec()
+                return
 
             newPlantilla.crearPasaAltos(fp, fa, ap, aa)
 
         elif text == "Pasa Banda":
             tipo = self.BPTypeComboBox.currentText()
             if tipo == "Anchos de Banda":
-                fo = float(self.f0BP.text())
-                dfp = float(self.dFpBP.text())
-                dfa = float(self.dFaBP.text())
-                ap = float(self.apVal.text())
-                aa = float(self.aaVal.text())
+                try:
+                    fo = float(self.f0BP.text())
+                    dfp = float(self.dFpBP.text())
+                    dfa = float(self.dFaBP.text())
+                    ap = float(self.apVal.text())
+                    aa = float(self.aaVal.text())
+
+                except:
+                    msgBox = QMessageBox()
+                    msgBox.setIcon(QMessageBox.Warning)
+                    msgBox.setText("Ingresar un número valido")
+                    msgBox.setWindowTitle("Advertencia")
+                    msgBox.exec()
+                    return
+
+                if dfp >= dfa:
+                    msgBox = QMessageBox()
+                    msgBox.setIcon(QMessageBox.Warning)
+                    msgBox.setText("Ingresar frecuencias válidas")
+                    msgBox.setWindowTitle("Advertencia")
+                    msgBox.exec()
+                    return
 
                 newPlantilla.crearPasaBandaBW(fo, dfp, dfa, ap, aa)
 
             elif tipo == "Frecuencias":
-                fpx = float(self.fpXBP.text())
-                fpy = float(self.fpYBP.text())
-                fax = float(self.faXBP.text())
-                fay = float(self.faYBP.text())
-                ap = float(self.apVal.text())
-                aa = float(self.aaVal.text())
+                try:
+                    fpx = float(self.fpXBP.text())
+                    fpy = float(self.fpYBP.text())
+                    fax = float(self.faXBP.text())
+                    fay = float(self.faYBP.text())
+                    ap = float(self.apVal.text())
+                    aa = float(self.aaVal.text())
+                except:
+                    msgBox = QMessageBox()
+                    msgBox.setIcon(QMessageBox.Warning)
+                    msgBox.setText("Ingresar un número valido")
+                    msgBox.setWindowTitle("Advertencia")
+                    msgBox.exec()
+                    return
+
+                if fax >= fpx or fay <= fpy:
+                        msgBox = QMessageBox()
+                        msgBox.setIcon(QMessageBox.Warning)
+                        msgBox.setText("Ingresar frecuencias válidas")
+                        msgBox.setWindowTitle("Advertencia")
+                        msgBox.exec()
+                        return
 
                 newPlantilla.crearPasaBandaFreq(fpx, fpy, fax, fay, ap, aa)
 
         elif text == "Rechaza Banda":
             tipo = self.BSTypeComboBox.currentText()
             if tipo == "Anchos de Banda":
-                fo = float(self.f0BS.text())
-                dfp = float(self.dFpBS.text())
-                dfa = float(self.dFaBS.text())
-                ap = float(self.apVal.text())
-                aa = float(self.aaVal.text())
+                try:
+                    fo = float(self.f0BS.text())
+                    dfp = float(self.dFpBS.text())
+                    dfa = float(self.dFaBS.text())
+                    ap = float(self.apVal.text())
+                    aa = float(self.aaVal.text())
+
+                except:
+                    msgBox = QMessageBox()
+                    msgBox.setIcon(QMessageBox.Warning)
+                    msgBox.setText("Ingresar un número valido")
+                    msgBox.setWindowTitle("Advertencia")
+                    msgBox.exec()
+                    return
+
+                if dfa >= dfp:
+                    msgBox = QMessageBox()
+                    msgBox.setIcon(QMessageBox.Warning)
+                    msgBox.setText("Ingresar frecuencias válidas")
+                    msgBox.setWindowTitle("Advertencia")
+                    msgBox.exec()
+                    return
 
                 newPlantilla.crearRechazaBandaBW(fo,dfp, dfa, ap, aa)
 
             elif tipo == "Frecuencias":
-                fpx = float(self.fpXBS.text())
-                fpy = float(self.fpYBS.text())
-                fax = float(self.faXBS.text())
-                fay = float(self.faYBS.text())
-                ap = float(self.apVal.text())
-                aa = float(self.aaVal.text())
+                try:
+                    fpx = float(self.fpXBS.text())
+                    fpy = float(self.fpYBS.text())
+                    fax = float(self.faXBS.text())
+                    fay = float(self.faYBS.text())
+                    ap = float(self.apVal.text())
+                    aa = float(self.aaVal.text())
+                except:
+                    msgBox = QMessageBox()
+                    msgBox.setIcon(QMessageBox.Warning)
+                    msgBox.setText("Ingresar un número valido")
+                    msgBox.setWindowTitle("Advertencia")
+                    msgBox.exec()
+                    return
+
+                if fax <= fpx or fay>= fpy:
+                        msgBox = QMessageBox()
+                        msgBox.setIcon(QMessageBox.Warning)
+                        msgBox.setText("Ingresar frecuencias válidas")
+                        msgBox.setWindowTitle("Advertencia")
+                        msgBox.exec()
+                        return
 
                 newPlantilla.crearRechazaBandaFreq(fpx, fpy, fax, fay, ap, aa)
 
@@ -417,42 +527,141 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Obtiene las etapas del filtro seleccionado
     '''
     def obtenerEtapas(self):
+        numberOfFunctions = len(self.listaEtapas)
+        for i in range(numberOfFunctions):
+            self.listaEtapasWidget.takeItem(numberOfFunctions - 1 - i)
+
+        self.listaEtapas.clear()
+        self.listaGananciaEtapas.clear()
+        self.listaGananciaNominalEtapas.clear()
+
         index = self.filtroComboBox.currentIndex()
         filtroActual = self.listaFiltros[index]
 
         self.filtroParaEtapas = filtroActual
         self.listaSOS = filtroActual.getSOS()
 
-        for i in range(len(self.listaSOS)):
-            item = QListWidgetItem("Etapa " + str(i))
-            item.setCheckState(Qt.Checked)
-
-            self.listaEtapasWidget.addItem(item)
-
-    '''
-        Graficar respuesta en frecuencia etapas
-    '''
-    def graficarRespEtapa(self):
         totalTF = self.filtroParaEtapas.currentTransferFunction
 
         poles = totalTF.poles
         zeros = totalTF.zeros
         gain = totalTF.gain
 
-        factorIndividual = gain ** (1/len(self.listaSOS))
+        gananciaNormalizadaTotal = gain
 
+        factorIndividual = gananciaNormalizadaTotal ** (1 / len(self.listaSOS))  # ganancia normalizada por etapa (misma)
+
+        self.infoEtapaComboBox.clear()
+
+        kTotal = 1
+
+        for i in range(len(self.listaSOS)):
+            numer = [self.listaSOS[i][0], self.listaSOS[i][1], self.listaSOS[i][2]]
+            denom = [self.listaSOS[i][3], self.listaSOS[i][4], self.listaSOS[i][5]]
+
+            tf = ss.TransferFunction(numer, denom)
+
+            tf = tf.to_zpk()
+
+            z = tf.zeros
+            p = tf.poles
+            k = 1
+
+            auxtf = ss.ZerosPolesGain(z,p,k).to_tf()
+
+            num = auxtf.num
+            den = auxtf.den
+
+            if len(den) == 2:
+                if len(num) == 0:
+                    k = den[1]
+                elif num[1] == 0:
+                    k = 1
+                else:
+                    k = den[1] / num[1]
+
+            elif len(den) == 3:
+                if len(num) == 1:
+                    k = den[2]
+                elif len(num) == 2:
+                    if num[1] == 0:
+                        k = den[1]
+                    else:
+                        k = den[2] / num[1]
+                elif len(num) == 3:
+                    if num[2] == 0:
+                        k = 1
+                    else:
+                        k = den[2] / num[2]
+
+            newTF = ss.ZerosPolesGain(z, p, k)
+
+            self.listaGananciaNominalEtapas.append(k)
+            self.listaEtapas.append(newTF)
+
+            kTotal *= k #actualizo la ganancia total
+
+        factoNormalizacion = (gain / kTotal) ** (1/len( self.listaEtapas))
+
+        for i in range(len(self.listaEtapas)):
+
+            z = self.listaEtapas[i].zeros
+            p = self.listaEtapas[i].poles
+            k = self.listaEtapas[i].gain
+
+            newTF = ss.ZerosPolesGain(z,p,factoNormalizacion*k)
+
+            self.listaGananciaEtapas.append(factoNormalizacion)
+
+            self.listaEtapas[i] = newTF
+
+            item = QListWidgetItem("Etapa " + str(i))
+            item.setCheckState(Qt.Checked)
+
+            self.listaEtapasWidget.addItem(item)
+
+            self.infoEtapaComboBox.addItem("Etapa " + str(i))
+
+        self.polosCerosEtapasPlot.clear()
+        self.polosCerosEtapasPlot.addCurvePolosCeros(poles, zeros, label = filtroActual.nombre)
+        self.polosCerosEtapasPlot.plotPolosCeros()
+
+    def cambiarGananciaEtapas(self):
+        for i in range(len(self.listaSOS)):
+            if self.listaEtapasWidget.item(i).checkState() == 2:
+                gan = 20*np.log10(self.listaGananciaEtapas[i])
+                ganancia, ok = QInputDialog.getText(self, "Cambiar ganancia", 'Ganancia actual: ' + str(gan) + 'dB ' + '\nNueva ganancia: ')
+                if not ok:
+                    return
+
+                if len(ganancia) < 1:
+                    nuevaGan = gan
+                else:
+                    nuevaGan = 10**(float(ganancia)/20)
+
+                z = self.listaEtapas[i].zeros
+                p = self.listaEtapas[i].poles
+                k = self.listaGananciaNominalEtapas[i]
+
+                newTF = ss.ZerosPolesGain(z, p, nuevaGan * k)
+
+                self.listaGananciaEtapas[i] = nuevaGan
+
+                self.listaEtapas[i] = newTF
+
+    '''
+        Graficar respuesta en frecuencia etapas
+    '''
+    def graficarRespEtapa(self):
         etapasPolos = []
         etapasZeros = []
         gananciaAcum = 1
+
         for i in range(len(self.listaSOS)):
             if self.listaEtapasWidget.item(i).checkState() == 2:
-                tf = ss.TransferFunction([self.listaSOS[i][0],self.listaSOS[i][1], self.listaSOS[i][2]],
-                                         [self.listaSOS[i][3],self.listaSOS[i][4], self.listaSOS[i][5]])
-                tf = tf.to_zpk()
-
-                z = tf.zeros
-                p = tf.poles
-                k = factorIndividual
+                z = self.listaEtapas[i].zeros
+                p = self.listaEtapas[i].poles
+                k = self.listaEtapas[i].gain
 
                 for pole in p:
                     etapasPolos.append(pole)
@@ -473,6 +682,55 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.etapaGanMagPlot.plotMag()
         self.etapaGanFasePlot.plotFase()
+
+    def mostrarInfoEtapas(self):
+        index = self.infoEtapaComboBox.currentIndex()
+        label = self.infoEtapaComboBox.currentText()
+        tf2 = self.listaEtapas[index]
+
+        frase = ''
+
+        poles = tf2.poles
+        zeros = tf2.zeros
+
+        tf = tf2.to_tf()
+
+        num = tf.num
+        den = tf.den
+
+        tfLatex = self.tf2Tex(num, den)
+
+        frase += tfLatex + '\n'
+
+        #Numerador
+        if len(zeros) == 1:
+            frase += "Num: $n = 1; f0 = " + self.formatedNum(zeros[0]/(2*np.pi)) + 'Hz$\n'
+        elif len(zeros) == 2:
+            if np.imag(zeros[0]) == 0:
+                frase += "Num: $n = 1; f0 = " + self.formatedNum(zeros[0]/(2*np.pi)) + 'Hz; '
+                frase += "n = 1; f0 = " + self.formatedNum(zeros[1] / (2 * np.pi)) + 'Hz$\n'
+            else:
+                frase += "Num: $n = 2; f0 = " + self.formatedNum(np.abs(zeros[0]) / (2 * np.pi)) + 'Hz; '
+                frase += "Q = " + self.formatedNum(np.abs(np.abs(zeros[0]) / (2*np.real(zeros[0])))) + '$\n'
+
+        # Denominador
+        if len(poles) == 1:
+            frase += "Den: $n = 1; f0 = " + self.formatedNum(poles[0] / (2 * np.pi)) + 'Hz$\n'
+        elif len(poles) == 2:
+            if np.imag(poles[0]) == 0:
+                frase += "Den: $n = 1; f0 = " + self.formatedNum(poles[0] / (2 * np.pi)) + 'Hz; '
+                frase += "n = 1, f0 = " + self.formatedNum(poles[1] / (2 * np.pi)) + 'Hz$\n'
+            else:
+                frase += "Den: $n = 2; f0 = " + self.formatedNum(np.abs(poles[0]) / (2 * np.pi)) + 'Hz; '
+                frase += "Q = " + self.formatedNum(np.abs(np.abs(poles[0]) / (2 * np.real(poles[0])))) + '$\n'
+
+        self.infoLatex.updateTex(frase)
+
+        self.infoPoloCeroPlot.clear()
+
+        self.infoPoloCeroPlot.addCurvePolosCeros(poles, zeros, label = label)
+
+        self.infoPoloCeroPlot.plotPolosCeros()
 
 
     '''
@@ -520,12 +778,49 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for i in range(len(self.listaFiltros)):
             self.ordenQComboBox.addItem(self.listaFiltros[i].nombre)
 
+
     def deleteEtapas(self):
         numberOfFunctions = len(self.listaSOS)
         for i in range(numberOfFunctions):
             self.listaEtapasWidget.takeItem(numberOfFunctions - 1 - i)
             self.listaEtapas.pop(numberOfFunctions - 1 - i)
 
+        self.infoEtapaComboBox.clear()
+
+    def formatedNum(self, num) -> str:
+        return "{0:.2f}".format(num)
+
+    def tf2Tex(self,num, den) -> str:
+        return "$H(s) = \\frac{" + self.arrToPol(num) + "}{" + self.arrToPol(den) + "}$ "
+
+    def arrToPol(self,arr=[], var='s'):
+
+        pol = ''
+        for i in range(len(arr)):
+            q = len(arr) - i - 1
+            if arr[i] != 0:
+                if pol and arr[i] > 0:
+                    pol += ' + '
+
+                if abs(arr[i]) != 1 or q < 1:
+                    base, exp = self.toBaseExp(arr[i])
+                    if (exp < -1 or exp > 3):
+                        pol += str(base) + '\\times10^{' + str(exp) + '}\ '
+                    else:
+                        pol += "{:.2f}".format(arr[i]) + '\ '
+                elif arr[i] == -1:
+                    pol += '-'
+
+                if q > 1:
+                    pol += var + '^{' + str(q) + '}'
+                elif q == 1:
+                    pol += var
+
+        return pol if pol else '0'
+
+    def toBaseExp(self,num):
+        str = "{:.2e}".format(num)
+        return (float(str[:4]), int(str[-3:]))
 
 
 

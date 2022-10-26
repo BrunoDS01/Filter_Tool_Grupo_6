@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>954</width>
+    <width>1054</width>
     <height>755</height>
    </rect>
   </property>
@@ -856,7 +856,7 @@
               </widget>
              </item>
              <item row="3" column="1">
-              <widget class="QPushButton" name="cambiarGananciaEtapas">
+              <widget class="QPushButton" name="cambiarGananciaEtapasButton">
                <property name="text">
                 <string>Cambiar Ganancia</string>
                </property>
@@ -867,7 +867,7 @@
            <item row="1" column="0">
             <widget class="QPushButton" name="graficarRespEtapaButton">
              <property name="text">
-              <string>Graficar respuesta en frecuencia</string>
+              <string>Calcular respuesta en frecuencia</string>
              </property>
             </widget>
            </item>
@@ -918,6 +918,55 @@
            <attribute name="title">
             <string>Polos y ceros</string>
            </attribute>
+           <layout class="QGridLayout" name="gridLayout_9">
+            <item row="0" column="0">
+             <widget class="QGroupBox" name="polosCerosEtapasPlotBox">
+              <property name="title">
+               <string/>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_14"/>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_9">
+           <attribute name="title">
+            <string>Información de las etapas</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_13">
+            <item row="0" column="0">
+             <widget class="QComboBox" name="infoEtapaComboBox"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QPushButton" name="mostrarInfoButton">
+              <property name="text">
+               <string>Mostrar información</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QGroupBox" name="infoLatexBox">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>200</height>
+               </size>
+              </property>
+              <property name="title">
+               <string/>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_23"/>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QGroupBox" name="infoPoloCeroPlotBox">
+              <property name="title">
+               <string/>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_39"/>
+             </widget>
+            </item>
+           </layout>
           </widget>
          </widget>
         </item>
@@ -933,7 +982,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>954</width>
+     <width>1054</width>
      <height>21</height>
     </rect>
    </property>
