@@ -413,7 +413,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.ordenQLatex.updateTex(stri)
 
-
     '''
         Obtiene las etapas del filtro seleccionado
     '''
@@ -425,28 +424,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.listaSOS = filtroActual.getSOS()
 
         for i in range(len(self.listaSOS)):
-            factor = 1
-
-            if self.listaSOS[i][2] != 0:
-                factor /= self.listaSOS[i][2]
-            elif self.listaSOS[i][1] != 0:
-                factor /= self.listaSOS[i][1]
-            elif self.listaSOS[i][0] != 0:
-                factor /= self.listaSOS[i][0]
-
-            if self.listaSOS[i][5] != 0:
-                factor *= self.listaSOS[i][5]
-            elif self.listaSOS[i][4] != 0:
-                factor *= self.listaSOS[i][4]
-            elif self.listaSOS[i][3] != 0:
-                factor *= self.listaSOS[i][3]
-
-            num = [self.listaSOS[i][0]*factor, self.listaSOS[i][1]*factor, self.listaSOS[i][2]*factor]
-            den = [self.listaSOS[i][3], self.listaSOS[i][4], self.listaSOS[i][5]]
-
-            tf = ss.TransferFunction(num, den)
-            self.listaEtapas.append(tf)
-
             item = QListWidgetItem("Etapa " + str(i))
             item.setCheckState(Qt.Checked)
 
@@ -458,58 +435,33 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def graficarRespEtapa(self):
         totalTF = self.filtroParaEtapas.currentTransferFunction
 
-        numT = totalTF.num
-        denT = totalTF.den
+        poles = totalTF.poles
+        zeros = totalTF.zeros
+        gain = totalTF.gain
 
-        ganTotal = 1
+        factorIndividual = gain ** (1/len(self.listaSOS))
 
-        for i in range(len(numT)-1, -1, -1):
-            if numT[i] != 0.0:
-                ganTotal *= numT[i]
-                break
-
-        for i in range(len(denT)-1, -1, -1):
-            if denT[i] != 0.0:
-                ganTotal *= 1 / denT[i]
-                break
-
-        contador = 0
+        etapasPolos = []
+        etapasZeros = []
+        gananciaAcum = 1
         for i in range(len(self.listaSOS)):
             if self.listaEtapasWidget.item(i).checkState() == 2:
-                contador += 1
+                tf = ss.TransferFunction([self.listaSOS[i][0],self.listaSOS[i][1], self.listaSOS[i][2]],
+                                         [self.listaSOS[i][3],self.listaSOS[i][4], self.listaSOS[i][5]])
+                tf = tf.to_zpk()
 
-        factorTotal = ganTotal ** (1/contador)
+                z = tf.zeros
+                p = tf.poles
+                k = factorIndividual
 
-        etapasNum = sp.poly(1, s)
-        etapasDen = sp.poly(1, s)
-        for i in range(len(self.listaSOS)):
-            if self.listaEtapasWidget.item(i).checkState() == 2:
-                newNum = (self.listaSOS[i][0]*s**2 + self.listaSOS[i][1]*s + self.listaSOS[i][2])
-                newDen = self.listaSOS[i][3]*s**2 + self.listaSOS[i][4]*s + self.listaSOS[i][5]
-                factor = 1
+                for pole in p:
+                    etapasPolos.append(pole)
+                for zero in z:
+                    etapasZeros.append(zero)
 
-                if self.listaSOS[i][2] != 0:
-                    factor /= self.listaSOS[i][2]
-                elif self.listaSOS[i][1] !=0:
-                    factor /= self.listaSOS[i][1]
-                elif self.listaSOS[i][0] != 0:
-                    factor /= self.listaSOS[i][0]
+                gananciaAcum *= k
 
-                if self.listaSOS[i][5] != 0:
-                    factor *= self.listaSOS[i][5]
-                elif self.listaSOS[i][4] !=0:
-                    factor *= self.listaSOS[i][4]
-                elif self.listaSOS[i][3] != 0:
-                    factor *= self.listaSOS[i][3]
-
-                etapasNum = etapasNum * newNum * factor * factorTotal
-                etapasDen = etapasDen * newDen
-
-
-        num = np.array(etapasNum.all_coeffs(), dtype=float)  # coef num
-        den = np.array(etapasDen.all_coeffs(), dtype=float)  # coef den
-
-        self.currentEtapasTF = ss.TransferFunction(num, den)
+        self.currentEtapasTF = ss.ZerosPolesGain(etapasZeros, etapasPolos, gananciaAcum)
 
         self.etapaGanMagPlot.clear()
         self.etapaGanFasePlot.clear()

@@ -11,12 +11,12 @@ class FilterClass:
 
         self.nombre = None
 
-        self.transferFunction = ss.TransferFunction(1,1)    #transferencia final orden minimo
-        self.tfLP = ss.TransferFunction(1,1)               #transferencia del pasabajos orden minimo
+        self.transferFunction = ss.ZerosPolesGain([],[],1)    #transferencia final orden minimo
+        self.tfLP = ss.ZerosPolesGain([],[],1)               #transferencia del pasabajos orden minimo
 
-        self.currentTransferFunction = ss.TransferFunction(1,1)  # transferencia final
-        self.currentTFLP = ss.TransferFunction(1,1)             #transferencia pasa bajos (cambia con el orden)
-        self.currentLPRango = ss.TransferFunction(1,1)          #transferencia pasa bajos con rango
+        self.currentTransferFunction = ss.ZerosPolesGain([],[],1)  # transferencia final
+        self.currentTFLP = ss.ZerosPolesGain([],[],1)            #transferencia pasa bajos (cambia con el orden)
+        self.currentLPRango = ss.ZerosPolesGain([],[],1)          #transferencia pasa bajos con rango
 
         self.filterType = None          #Tipo de filtro
         self.filterName = None
@@ -55,14 +55,14 @@ class FilterClass:
         self.Aa = Aa
         self.Fp = Fp
 
-        b1, a1, N = self.findLowPassNormalizedFilter(Wp, Wa, Ap, Aa, btype)
-        self.tfLP = ss.TransferFunction(b1,a1)
-        self.currentTFLP = ss.TransferFunction(b1, a1)
+        z1, p1, k1, N = self.findLowPassNormalizedFilter(Wp, Wa, Ap, Aa, btype)
+        self.tfLP = ss.ZerosPolesGain(z1,p1,k1)
+        self.currentTFLP = ss.ZerosPolesGain(z1,p1,k1)
         self.n = N
         self.currentN = N
 
-        b, a = ss.lp2lp(b1, a1, Fp * 2 * np.pi)
-        self.transferFunction = ss.TransferFunction(b,a)
+        z,p,k = ss.lp2lp_zpk(z1, p1, k1, Fp * 2 * np.pi)
+        self.transferFunction = ss.ZerosPolesGain(z,p,k)
 
         self.currentTransferFunction = self.aplicarRangoDesnormalizacion(rango)
 
@@ -85,15 +85,16 @@ class FilterClass:
         self.Aa = Aa
         self.Fp = Fp
 
-        b1, a1, N = self.findLowPassNormalizedFilter(Wp, Wa, Ap, Aa, btype)
-        self.tfLP = ss.TransferFunction(b1, a1)
-        self.currentTFLP = ss.TransferFunction(b1, a1)
+        z1, p1, k1, N = self.findLowPassNormalizedFilter(Wp, Wa, Ap, Aa, btype)
+        self.tfLP = ss.ZerosPolesGain(z1, p1, k1)
+        self.currentTFLP = ss.ZerosPolesGain(z1, p1, k1)
         self.n = N
         self.currentN = N
 
-        b, a = ss.lp2hp(b1,a1, Fp * 2 * np.pi)
+        z,p,k = ss.lp2hp_zpk(z1,p1,k1, Fp * 2 * np.pi)
 
-        self.transferFunction = ss.TransferFunction(b, a)
+        self.transferFunction = ss.ZerosPolesGain(z, p, k)
+
         self.currentTransferFunction = self.aplicarRangoDesnormalizacion(rango)
 
         return self.currentTransferFunction
@@ -119,15 +120,16 @@ class FilterClass:
         self.Fo = Fo
         self.dFp = dFp
 
-        b1, a1, N = self.findLowPassNormalizedFilter(Wp, Wa, Ap, Aa, btype)
-        self.tfLP = ss.TransferFunction(b1, a1)
-        self.currentTFLP = ss.TransferFunction(b1, a1)
+        z1, p1, k1, N = self.findLowPassNormalizedFilter(Wp, Wa, Ap, Aa, btype)
+        self.tfLP = ss.ZerosPolesGain(z1, p1, k1)
+        self.currentTFLP = ss.ZerosPolesGain(z1, p1, k1)
         self.n = N
         self.currentN = N
 
-        b, a = ss.lp2bp(b1, a1, Fo * 2 * np.pi, dFp * 2 *np.pi)
+        z,p,k = ss.lp2bp_zpk(z1, p1, k1, Fo * 2 * np.pi, dFp * 2 *np.pi)
 
-        self.transferFunction = ss.TransferFunction(b, a)
+        self.transferFunction = ss.ZerosPolesGain(z, p, k)
+
         self.currentTransferFunction = self.aplicarRangoDesnormalizacion(rango)
 
         return self.currentTransferFunction
@@ -167,16 +169,17 @@ class FilterClass:
         self.Fo = Fo
         self.dFp = dFp
 
-        b1, a1, N = self.findLowPassNormalizedFilter(Wp, Wa, Ap, Aa, btype)
-        self.tfLP = ss.TransferFunction(b1, a1)
-        self.currentTFLP = ss.TransferFunction(b1, a1)
+        z1, p1, k1, N = self.findLowPassNormalizedFilter(Wp, Wa, Ap, Aa, btype)
+        self.tfLP = ss.ZerosPolesGain(z1, p1, k1)
+        self.currentTFLP = ss.ZerosPolesGain(z1, p1, k1)
         self.n = N
         self.currentN = N
 
 
-        b, a = ss.lp2bp(b1, a1, Fo * 2 * np.pi, dFp * 2 * np.pi)
+        z,p,k = ss.lp2bp_zpk(z1, p1, k1, Fo * 2 * np.pi, dFp * 2 * np.pi)
 
-        self.transferFunction = ss.TransferFunction(b, a)
+        self.transferFunction = ss.ZerosPolesGain(z, p, k)
+
         self.currentTransferFunction = self.aplicarRangoDesnormalizacion(rango)
 
         return self.currentTransferFunction
@@ -201,15 +204,16 @@ class FilterClass:
         self.Fo = Fo
         self.dFp = dFp
 
-        b1, a1, N = self.findLowPassNormalizedFilter(Wp, Wa, Ap, Aa, btype)
-        self.tfLP = ss.TransferFunction(b1, a1)
-        self.currentTFLP = ss.TransferFunction(b1, a1)
+        z1, p1, k1, N = self.findLowPassNormalizedFilter(Wp, Wa, Ap, Aa, btype)
+        self.tfLP = ss.ZerosPolesGain(z1, p1, k1)
+        self.currentTFLP = ss.ZerosPolesGain(z1, p1, k1)
         self.n = N
         self.currentN = N
 
-        b, a = ss.lp2bs(b1, a1, Fo * 2 * np.pi, dFp * 2 * np.pi)
+        z,p,k = ss.lp2bs_zpk(z1, p1, k1, Fo * 2 * np.pi, dFp * 2 * np.pi)
 
-        self.transferFunction = ss.TransferFunction(b, a)
+        self.transferFunction = ss.ZerosPolesGain(z, p, k)
+
         self.currentTransferFunction = self.aplicarRangoDesnormalizacion(rango)
 
         return self.currentTransferFunction
@@ -246,15 +250,16 @@ class FilterClass:
         self.Fo = Fo
         self.dFp = dFp
 
-        b1, a1, N = self.findLowPassNormalizedFilter(Wp, Wa, Ap, Aa, btype)
-        self.tfLP = ss.TransferFunction(b1, a1)
-        self.currentTFLP = ss.TransferFunction(b1, a1)
+        z1, p1, k1, N = self.findLowPassNormalizedFilter(Wp, Wa, Ap, Aa, btype)
+        self.tfLP = ss.ZerosPolesGain(z1, p1, k1)
+        self.currentTFLP = ss.ZerosPolesGain(z1, p1, k1)
         self.n = N
         self.currentN = N
 
-        b, a = ss.lp2bs(b1, a1, Fo * 2 * np.pi, dFp * 2 * np.pi)
+        z,p,k = ss.lp2bs_zpk(z1, p1, k1, Fo * 2 * np.pi, dFp * 2 * np.pi)
 
-        self.transferFunction = ss.TransferFunction(b, a)
+        self.transferFunction = ss.ZerosPolesGain(z, p, k)
+
         self.currentTransferFunction = self.aplicarRangoDesnormalizacion(rango)
 
         return self.currentTransferFunction
@@ -277,8 +282,8 @@ class FilterClass:
 
             N1, Wn = ss.buttord(self.Wp, Wan, self.Ap, self.Aa, True)
             self.currentN = N1                                      #N1 debería ser igual a N
-            b1, a1 = ss.butter(N1, Wn, 'lowpass', analog=True)
-            self.currentTFLP = ss.TransferFunction(b1, a1)
+            z1,p1,k1 = ss.butter(N1, Wn, 'lowpass', output = 'zpk',analog=True)
+            self.currentTFLP = ss.ZerosPolesGain(z1,p1,k1)
 
         elif self.filterName == "cheby1":
             Wan1 = np.cosh(np.arccosh(np.sqrt((10 ** (self.Aa / 10) - 1) / (10 ** (self.Ap / 10) - 1))) / (N))
@@ -290,8 +295,8 @@ class FilterClass:
 
             N1, Wn = ss.cheb1ord(self.Wp, Wan, self.Ap, self.Aa, True)
             self.currentN = N1  # N1 debería ser igual a N
-            b1, a1 = ss.cheby1(N1, self.Ap, Wn, 'lowpass', analog=True)
-            self.currentTFLP = ss.TransferFunction(b1, a1)
+            z1,p1,k1 = ss.cheby1(N1, self.Ap, Wn, 'lowpass', output = 'zpk', analog=True)
+            self.currentTFLP = ss.ZerosPolesGain(z1,p1,k1)
 
 
         elif self.filterName == "cheby2":
@@ -304,40 +309,41 @@ class FilterClass:
 
             N1, Wn = ss.cheb2ord(self.Wp, Wan, self.Ap, self.Aa, True)
             self.currentN = N1  # N1 debería ser igual a N
-            b1, a1 = ss.cheby2(N1, self.Aa, Wn, 'lowpass', analog=True)
-            self.currentTFLP = ss.TransferFunction(b1, a1)
+            z1,p1,k1 = ss.cheby2(N1, self.Aa, Wn, 'lowpass', output = 'zpk', analog=True)
+            self.currentTFLP = ss.ZerosPolesGain(z1,p1,k1)
 
         elif self.filterName == "ellip":
 
             self.currentN = N  # N1 debería ser igual a N
-            b1, a1 = ss.ellip(N, self.Ap, self.Aa, self.Wp, 'lowpass', analog=True) #debería funcionar
-            self.currentTFLP = ss.TransferFunction(b1, a1)
+            z1,p1,k1 = ss.ellip(N, self.Ap, self.Aa, self.Wp, 'lowpass', output = 'zpk', analog=True) #debería funcionar
+            self.currentTFLP = ss.ZerosPolesGain(z1,p1,k1)
 
         self.currentTransferFunction = self.aplicarRangoDesnormalizacion(self.rango)
 
         return self.currentTransferFunction
 
     def findLowPassNormalizedFilter(self, Wp, Wa, Ap, Aa, btype):
-        b1 = [1]
-        a1 = [1]
+        z1 = [1]
+        p1 = [1]
+        k1 = [1]
 
         if (btype == "butter"):
             N, Wn = ss.buttord(Wp, Wa, Ap, Aa, True)
-            b1, a1 = ss.butter(N, Wn, 'lowpass', analog = True)
+            z1, p1, k1 = ss.butter(N, Wn, 'lowpass', output = 'zpk', analog = True)
 
         elif (btype == "cheby1"):
             N, Wn = ss.cheb1ord(Wp, Wa, Ap, Aa, True)
-            b1, a1 = ss.cheby1(N, Ap, Wn, 'lowpass', analog = True)
+            z1, p1, k1 = ss.cheby1(N, Ap, Wn, 'lowpass', output = 'zpk', analog = True)
 
         elif (btype == "cheby2"):
             N, Wn = ss.cheb2ord(Wp, Wa, Ap, Aa, True)
-            b1, a1 = ss.cheby2(N, Aa, Wn, 'lowpass', analog = True)
+            z1, p1, k1 = ss.cheby2(N, Aa, Wn, 'lowpass', output = 'zpk', analog = True)
 
         elif (btype == "ellip"):
             N, Wn = ss.ellipord(Wp, Wa, Ap, Aa, True)
-            b1, a1 = ss.ellip(N, Ap, Aa, Wn, 'lowpass', analog=True)
+            z1, p1, k1 = ss.ellip(N, Ap, Aa, Wn, 'lowpass', output = 'zpk', analog=True)
 
-        return b1, a1, N
+        return z1, p1, k1, N
 
 
     '''
@@ -350,14 +356,15 @@ class FilterClass:
         Wx = self.findWx()
         escale = (self.Wa / Wx)**(rango)
 
-        a1 = self.currentTFLP.den
-        b1 = self.currentTFLP.num
+        z1 = self.currentTFLP.zeros
+        p1 = self.currentTFLP.poles
+        k1 = self.currentTFLP.gain
 
-        b2, a2 = ss.lp2lp(b1, a1, escale)
+        z2, p2, k2 = ss.lp2lp_zpk(z1, p1, k1, escale)
 
-        self.currentLPRango = ss.TransferFunction(b2, a2)
+        self.currentLPRango = ss.ZerosPolesGain(z1, p1, k1)
 
-        self.currentTransferFunction = self.findFilterFromLP(b2,a2)
+        self.currentTransferFunction = self.findFilterFromLP(z2, p2, k2)
 
         return self.currentTransferFunction
 
@@ -384,20 +391,21 @@ class FilterClass:
 
         return Wx
 
-    def findFilterFromLP(self, b1, a1):
+    def findFilterFromLP(self, z1, p1, k1):
+        z, p, k = 0,0,1
         if self.filterType == "LP":
-            b, a = ss.lp2lp(b1, a1, self.Fp * 2 * np.pi)
+            z,p,k = ss.lp2lp_zpk(z1, p1, k1, self.Fp * 2 * np.pi)
 
         elif self.filterType == "HP":
-            b, a = ss.lp2hp(b1, a1, self.Fp * 2 * np.pi)
+            z,p,k = ss.lp2hp_zpk(z1, p1, k1, self.Fp * 2 * np.pi)
 
         elif self.filterType == "BP":
-            b, a = ss.lp2bp(b1, a1, self.Fo * 2 * np.pi, self.dFp * 2 * np.pi)
+            z,p,k = ss.lp2bp_zpk(z1, p1, k1, self.Fo * 2 * np.pi, self.dFp * 2 * np.pi)
 
         elif self.filterType == "BS":
-            b, a = ss.lp2bs(b1, a1, self.Fo * 2 * np.pi, self.dFp * 2 * np.pi)
+            z,p,k = ss.lp2bs_zpk(z1, p1, k1, self.Fo * 2 * np.pi, self.dFp * 2 * np.pi)
 
-        return ss.TransferFunction(b, a)
+        return ss.ZerosPolesGain(z,p,k)
 
     def getBode(self, w, WDado):
         if WDado == None:
@@ -418,10 +426,9 @@ class FilterClass:
         return self.currentTransferFunction.poles, self.currentTransferFunction.zeros
 
     def getSOS(self):
-        tf = self.currentTransferFunction.to_zpk()
+        tf = self.currentTransferFunction
         z,p,k = tf.zeros, tf.poles, tf.gain
         sos = ss.zpk2sos(z, p, k, pairing= 'minimal', analog=True)
-
         return sos
 
 
