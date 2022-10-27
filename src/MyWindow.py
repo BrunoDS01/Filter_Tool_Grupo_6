@@ -9,7 +9,7 @@ import scipy.signal as ss
 import sympy as sp
 from sympy.abc import s
 import numpy as np
-from src.plottingClasses import BodePlot, PolosCerosPlot, TemporalPlot
+from src.plottingClasses import BodePlot, PolosCerosPlot, TemporalPlot, GroupDelayPlot
 from src.PlantillaClass import PlantillaClass
 from src.MPLLaTexClass import MPLTexText
 
@@ -85,6 +85,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.respuestaEscalonPlot = TemporalPlot(parent=self.respuestaEscalonPlotBox)
         self.respuestaEscalonPlotBox.layout().addWidget(self.respuestaEscalonPlot.navToolBar)
         self.respuestaEscalonPlotBox.layout().addWidget(self.respuestaEscalonPlot)
+
+        #Gráfico Group Delay
+        self.groupDelayPlot = GroupDelayPlot(parent=self.groupDelayPlotBox)
+        self.groupDelayPlotBox.layout().addWidget(self.groupDelayPlot.navToolBar)
+        self.groupDelayPlotBox.layout().addWidget(self.groupDelayPlot)
 
         # Textos Latex
         self.ordenQLatex = MPLTexText(self.ordenQLatexBox)
@@ -419,6 +424,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 w2, m2, p2 = self.listaFiltros[i].getBodeNormalized(None, False)
                 self.curvaNormalizadaPlot.addNormalizedMagCurve(w2, 10**(m2/20), label)
 
+                #grafico el group delay
+                delay = -np.diff(np.unwrap(p * np.pi / 180)) / np.diff(w)
+                freq = w/(2*np.pi)
+                freqDelay = freq[1:]
+                self.groupDelayPlot.addGroupDelayPlot(freqDelay, delay, label)
+
+
     def graficarPolosZeros(self):
         for i in range(len(self.listaFiltros)):
             if self.listFiltrosWidget.item(i).checkState() == 2:
@@ -442,6 +454,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.curvaNormalizadaPlot.clear()
         self.polosCerosPlot.clear()
         self.respuestaEscalonPlot.clear()
+        self.groupDelayPlot.clear()
 
         self.graficarPlantillas()
         self.graficarFiltros()
@@ -456,6 +469,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.curvaNormalizadaPlot.plotNormalizedMag()
         self.polosCerosPlot.plotPolosCeros()
         self.respuestaEscalonPlot.plotTemporalPlot()
+        self.groupDelayPlot.plotTGroupDelay()
 
     '''
         Cambiar orden del filtro

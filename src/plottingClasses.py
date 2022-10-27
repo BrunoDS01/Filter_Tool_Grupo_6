@@ -1,5 +1,6 @@
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas, NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
+from matplotlib.pyplot import Rectangle
 import numpy as np
 
 class MplCanvas(FigureCanvas):
@@ -31,22 +32,23 @@ class BodePlot(MplCanvas):
         self.axes.semilogx(w, fase, label=label)
 
     def addLPPlantilla(self, Fp, Fa, Ap, Aa):
-        self.axes.fill([Fp / 10, Fp, Fp, Fp / 10], [-Ap, -Ap, -Ap*2, -Ap*2], '0.9', lw=0)
-        self.axes.fill([Fa, Fa*10, Fa*10, Fa], [0, 0, -Aa, -Aa], '0.9', lw=0)
+        self.axes.add_patch(Rectangle((Fp, -Ap), - (Fp - Fp / 5), -(Ap * 2 - Ap), color='blue'))
+        self.axes.add_patch(Rectangle((Fa, -Aa), (Fa), (0 + Aa), color='blue'))
 
     def addHPPlantilla(self, Fp, Fa, Ap, Aa):
-        self.axes.fill([Fa / 10, Fa, Fa, Fa / 10], [0, 0, -Aa, -Aa], '0.9', lw=0)
-        self.axes.fill([Fp, Fp * 10, Fp * 10, Fp], [-Ap, -Ap, -Ap*2, -Ap*2], '0.9', lw=0)
+        self.axes.add_patch(Rectangle((Fp, -Ap), (Fp), -(Ap * 2 - Ap), color='blue'))
+        self.axes.add_patch(Rectangle((Fa, -Aa), -(Fa - Fa/5), (0 + Aa), color='blue'))
 
     def addBSPlantilla(self, Fpx, Fpy, Fax, Fay, Ap, Aa):
-        self.axes.fill([Fpx / 10, Fpx, Fpx, Fpx / 10], [-Ap, -Ap, -Ap*2, -Ap*2], '0.9', lw=0)
-        self.axes.fill([Fax, Fay, Fay, Fax], [0, 0, -Aa, -Aa], '0.9', lw=0)
-        self.axes.fill([Fpy, Fpy * 10, Fpy * 10, Fpy], [-Ap, -Ap, -Ap*2, -Ap*2], '0.9', lw=0)
+        self.axes.add_patch(Rectangle((Fpx, -Ap), - (Fpx - Fpx / 5), -(Ap * 2 - Ap), color='blue'))
+        self.axes.add_patch(Rectangle((Fax, -Aa), (Fay-Fax), (0 + Aa), color='blue'))
+        self.axes.add_patch(Rectangle((Fpy, -Ap), (Fpy), -(Ap * 2 - Ap), color='blue'))
 
     def addBPPlantilla(self, Fpx, Fpy, Fax, Fay, Ap, Aa):
-        self.axes.fill([Fax / 10, Fax, Fax, Fax / 10], [0, 0, -Aa, -Aa], '0.9', lw=0)
-        self.axes.fill([Fpx, Fpy, Fpy, Fpx], [-Ap, -Ap, -Ap*2, -Ap*2], '0.9', lw=0)
-        self.axes.fill([Fay, Fay * 10, Fay * 10, Fay], [0, 0, -Aa, -Aa], '0.9', lw=0)
+        self.axes.add_patch(Rectangle((Fax, -Aa), -(Fax - Fax/5), (0 + Aa), color='blue'))
+        self.axes.add_patch(Rectangle((Fpx, -Ap), (Fpy -Fpx), -(Ap * 2 - Ap), color='blue'))
+        self.axes.add_patch(Rectangle((Fay, -Aa), (Fay), (0 + Aa), color='blue'))
+
 
     def addLPPlantillaAten(self, Fp, Fa, Ap, Aa):
         self.addLPPlantilla(Fp, Fa, -Ap, -Aa)
@@ -132,6 +134,24 @@ class TemporalPlot(MplCanvas):
         self.axes.set_xlabel('Tiempo [s]')
         self.axes.set_ylabel('Tensión [V]')
         self.axes.set_xscale('linear')
+
+        self.axes.legend(loc=0)
+        self.axes.grid(visible=True, which='both', axis='both')
+
+        self.fig.canvas.draw()
+
+class GroupDelayPlot(MplCanvas):
+    def __init__(self, parent=None):
+        if parent is not None:
+            super().__init__(parent)
+
+    def addGroupDelayPlot(self, f, gd, label):
+        self.axes.plot(f, gd, label = label)
+
+    def plotTGroupDelay(self):
+        self.axes.set_xlabel('Frecuencia [Hz]')
+        self.axes.set_ylabel('Group Delay [s]')
+        self.axes.set_xscale('log')
 
         self.axes.legend(loc=0)
         self.axes.grid(visible=True, which='both', axis='both')

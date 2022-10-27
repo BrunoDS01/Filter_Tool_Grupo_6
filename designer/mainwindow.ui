@@ -15,7 +15,7 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="2">
+    <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
        <number>0</number>
@@ -120,6 +120,21 @@
                <string/>
               </property>
               <layout class="QGridLayout" name="gridLayout_12"/>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_10">
+           <attribute name="title">
+            <string>Group Delay</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_15">
+            <item row="0" column="0">
+             <widget class="QGroupBox" name="groupDelayPlotBox">
+              <property name="title">
+               <string/>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_41"/>
              </widget>
             </item>
            </layout>
@@ -841,13 +856,6 @@
                </property>
               </widget>
              </item>
-             <item row="1" column="0" colspan="2">
-              <widget class="QPushButton" name="obtenerEtapasButton">
-               <property name="text">
-                <string>Obtener etapas</string>
-               </property>
-              </widget>
-             </item>
              <item row="3" column="0">
               <widget class="QPushButton" name="borrarEtapasButton">
                <property name="text">
@@ -859,6 +867,13 @@
               <widget class="QPushButton" name="cambiarGananciaEtapasButton">
                <property name="text">
                 <string>Cambiar Ganancia</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0" colspan="2">
+              <widget class="QPushButton" name="obtenerEtapasButton">
+               <property name="text">
+                <string>Obtener etapas</string>
                </property>
               </widget>
              </item>
